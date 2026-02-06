@@ -29,6 +29,9 @@ export function Footer() {
               <Link href="/register" className="hover:text-primary transition-colors">
                 Register Now
               </Link>
+              <Link href="/team" className="hover:text-primary transition-colors">
+                Our Team
+              </Link>
               <Link href="/admin" className="hover:text-primary transition-colors">
                 Admin Portal
               </Link>

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/use-toast"
+import { AnimatedSection } from "@/components/ui/animated-section"
 
 interface TeamData {
   registrationId: string
@@ -159,6 +160,7 @@ Contact: events@mathflowai.com
     <div className="container py-10 md:py-16">
       <div className="max-w-2xl mx-auto">
         {/* Success Header */}
+        <AnimatedSection variant="scale-up" duration={600}>
         <div className="text-center mb-8">
           <div className="h-20 w-20 rounded-full gradient-bg flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
             <CheckCircle2 className="h-10 w-10 text-white" />
@@ -168,8 +170,10 @@ Contact: events@mathflowai.com
             Your team has been registered for MathFlow AI
           </p>
         </div>
+        </AnimatedSection>
 
         {/* Registration ID Card */}
+        <AnimatedSection variant="fade-up" delay={200}>
         <Card className="mb-6 border-2 border-primary/20 bg-primary/5">
           <CardContent className="py-6">
             <div className="text-center">
@@ -197,8 +201,10 @@ Contact: events@mathflowai.com
             </div>
           </CardContent>
         </Card>
+        </AnimatedSection>
 
         {/* Team Details */}
+        <AnimatedSection variant="fade-up" delay={300}>
         <Card className="mb-6">
           <CardHeader>
             <CardTitle>Team Details</CardTitle>
@@ -233,8 +239,10 @@ Contact: events@mathflowai.com
             </div>
           </CardContent>
         </Card>
+        </AnimatedSection>
 
         {/* Team Members */}
+        <AnimatedSection variant="fade-up" delay={400}>
         <Card className="mb-6">
           <CardHeader>
             <CardTitle>Team Members ({team.members.length})</CardTitle>
@@ -267,9 +275,11 @@ Contact: events@mathflowai.com
             </div>
           </CardContent>
         </Card>
+        </AnimatedSection>
 
         {/* Important Notice */}
-        <Card className="mb-6 border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950/20">
+        <AnimatedSection variant="fade-up" delay={500}>
+        <Card className="mb-6 border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950/20">>
           <CardContent className="py-4">
             <h4 className="font-semibold mb-2">📌 Important Information</h4>
             <ul className="text-sm text-muted-foreground space-y-1">
@@ -281,20 +291,23 @@ Contact: events@mathflowai.com
             </ul>
           </CardContent>
         </Card>
+        </AnimatedSection>
 
         {/* Action Buttons */}
+        <AnimatedSection variant="fade-up" delay={600}>
         <div className="flex flex-col sm:flex-row gap-4">
-          <Button onClick={downloadConfirmation} className="flex-1">
+          <Button onClick={downloadConfirmation} className="flex-1 hover-lift">
             <Download className="mr-2 h-4 w-4" />
             Download Confirmation
           </Button>
-          <Button asChild variant="outline" className="flex-1">
+          <Button asChild variant="outline" className="flex-1 hover-lift">
             <Link href="/">
               <Home className="mr-2 h-4 w-4" />
               Back to Home
             </Link>
           </Button>
         </div>
+        </AnimatedSection>
       </div>
     </div>
   )

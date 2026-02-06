@@ -71,11 +71,63 @@ const config = {
           "0%, 100%": { boxShadow: "0 0 20px rgba(124, 58, 237, 0.5)" },
           "50%": { boxShadow: "0 0 40px rgba(124, 58, 237, 0.8)" },
         },
+        "float": {
+          "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
+          "33%": { transform: "translateY(-12px) rotate(1deg)" },
+          "66%": { transform: "translateY(6px) rotate(-1deg)" },
+        },
+        "float-delayed": {
+          "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
+          "33%": { transform: "translateY(8px) rotate(-1deg)" },
+          "66%": { transform: "translateY(-14px) rotate(1deg)" },
+        },
+        "bounce-subtle": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-4px)" },
+        },
+        "pulse-slow": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.6" },
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        "count-up": {
+          "0%": { transform: "translateY(100%)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        "slide-in-bottom": {
+          "0%": { transform: "translateY(30px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        "fade-in-up": {
+          "0%": { transform: "translateY(20px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        "scale-in": {
+          "0%": { transform: "scale(0.9)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        "rotate-in": {
+          "0%": { transform: "rotate(-6deg) scale(0.95)", opacity: "0" },
+          "100%": { transform: "rotate(0deg) scale(1)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "float": "float 6s ease-in-out infinite",
+        "float-delayed": "float-delayed 7s ease-in-out infinite",
+        "bounce-subtle": "bounce-subtle 2s ease-in-out infinite",
+        "pulse-slow": "pulse-slow 3s ease-in-out infinite",
+        "shimmer": "shimmer 2s linear infinite",
+        "count-up": "count-up 0.6s ease-out forwards",
+        "slide-in-bottom": "slide-in-bottom 0.5s ease-out forwards",
+        "fade-in-up": "fade-in-up 0.6s ease-out forwards",
+        "scale-in": "scale-in 0.5s ease-out forwards",
+        "rotate-in": "rotate-in 0.6s ease-out forwards",
       },
     },
   },
