@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
         (b.isLeader ? 1 : 0) - (a.isLeader ? 1 : 0)
       )
 
-      const memberData = []
+      const memberData: string[] = []
       for (let i = 0; i < 5; i++) {
         const member = sortedMembers[i]
         if (member) {
