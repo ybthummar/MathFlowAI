@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
+import { teamsCollection, Team, Member } from '@/lib/firebase'
 import { registrationSchema } from '@/lib/validators'
 import { sendConfirmationEmail } from '@/lib/mailer'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -38,11 +38,12 @@ export async function POST(request: NextRequest) {
     const data = validationResult.data
 
     // Check for duplicate team name
-    const existingTeam = await prisma.team.findUnique({
-      where: { teamName: data.teamName },
-    })
+    const existingTeamSnapshot = await teamsCollection
+      .where('teamName', '==', data.teamName)
+      .limit(1)
+      .get()
 
-    if (existingTeam) {
+    if (!existingTeamSnapshot.empty) {
       return NextResponse.json(
         { error: 'Team name already exists. Please choose a different name.' },
         { status: 409 }
@@ -51,19 +52,23 @@ export async function POST(request: NextRequest) {
 
     // Check for duplicate member emails across all teams
     const memberEmails = data.members.map(m => m.email)
-    const existingMembers = await prisma.member.findMany({
-      where: {
-        email: { in: memberEmails },
-      },
-      select: { email: true },
+    const teamsSnapshot = await teamsCollection.get()
+    const existingEmails: string[] = []
+    
+    teamsSnapshot.forEach((doc) => {
+      const teamData = doc.data() as Team
+      teamData.members?.forEach(member => {
+        if (memberEmails.includes(member.email)) {
+          existingEmails.push(member.email)
+        }
+      })
     })
 
-    if (existingMembers.length > 0) {
-      const duplicateEmails = existingMembers.map(m => m.email)
+    if (existingEmails.length > 0) {
       return NextResponse.json(
         { 
           error: 'One or more team members are already registered with another team.',
-          duplicates: duplicateEmails 
+          duplicates: existingEmails 
         },
         { status: 409 }
       )
@@ -72,40 +77,41 @@ export async function POST(request: NextRequest) {
     // Generate unique registration ID
     const registrationId = generateRegistrationId()
 
-    // Create team with members in a transaction
-    const team = await prisma.team.create({
-      data: {
-        registrationId,
-        teamName: data.teamName,
-        department: data.department,
-        leaderEmail: data.leaderEmail,
-        leaderPhone: data.leaderPhone,
-        agreedToRules: data.agreedToRules,
-        members: {
-          create: data.members.map((member, index) => ({
-            name: member.name,
-            email: member.email,
-            phone: member.phone,
-            rollNo: member.rollNo,
-            year: member.year,
-            isLeader: index === 0,
-          })),
-        },
-      },
-      include: {
-        members: true,
-      },
-    })
+    // Create team document
+    const now = new Date()
+    const members: Member[] = data.members.map((member, index) => ({
+      name: member.name,
+      email: member.email,
+      phone: member.phone,
+      rollNo: member.rollNo,
+      year: member.year,
+      isLeader: index === 0,
+    }))
+
+    const teamData: Omit<Team, 'id'> = {
+      registrationId,
+      teamName: data.teamName,
+      department: data.department,
+      leaderEmail: data.leaderEmail,
+      leaderPhone: data.leaderPhone,
+      agreedToRules: data.agreedToRules,
+      status: 'PENDING',
+      createdAt: now,
+      updatedAt: now,
+      members,
+    }
+
+    const docRef = await teamsCollection.add(teamData)
 
     // Send confirmation email (async, don't block response)
-    const leader = team.members.find(m => m.isLeader) || team.members[0]
+    const leader = members.find(m => m.isLeader) || members[0]
     sendConfirmationEmail({
-      teamName: team.teamName,
-      registrationId: team.registrationId,
+      teamName: data.teamName,
+      registrationId,
       leaderName: leader.name,
-      leaderEmail: team.leaderEmail,
-      department: team.department,
-      members: team.members.map(m => ({
+      leaderEmail: data.leaderEmail,
+      department: data.department,
+      members: members.map(m => ({
         name: m.name,
         email: m.email,
         rollNo: m.rollNo,
@@ -114,8 +120,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      registrationId: team.registrationId,
-      teamId: team.id,
+      registrationId,
+      teamId: docRef.id,
       message: 'Team registered successfully!',
     })
   } catch (error) {
@@ -139,21 +145,25 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const team = await prisma.team.findUnique({
-      where: { registrationId },
-      include: {
-        members: {
-          orderBy: { isLeader: 'desc' },
-        },
-      },
-    })
+    const snapshot = await teamsCollection
+      .where('registrationId', '==', registrationId)
+      .limit(1)
+      .get()
 
-    if (!team) {
+    if (snapshot.empty) {
       return NextResponse.json(
         { error: 'Team not found' },
         { status: 404 }
       )
     }
+
+    const doc = snapshot.docs[0]
+    const team = doc.data() as Team
+
+    // Sort members with leader first
+    const sortedMembers = [...team.members].sort((a, b) => 
+      (b.isLeader ? 1 : 0) - (a.isLeader ? 1 : 0)
+    )
 
     return NextResponse.json({
       success: true,
@@ -164,7 +174,7 @@ export async function GET(request: NextRequest) {
         leaderEmail: team.leaderEmail,
         status: team.status,
         createdAt: team.createdAt,
-        members: team.members.map(m => ({
+        members: sortedMembers.map(m => ({
           name: m.name,
           email: m.email,
           rollNo: m.rollNo,

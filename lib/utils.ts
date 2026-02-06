@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function generateRegistrationId(): string {
   const timestamp = Date.now().toString(36).toUpperCase()
   const random = Math.random().toString(36).substring(2, 6).toUpperCase()
-  return `MATH-${timestamp}-${random}`
+  return `MFA-${timestamp}-${random}`
 }
 
 export function formatDate(date: Date | string): string {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import prisma from '@/lib/prisma'
+import { adminsCollection, Admin } from '@/lib/firebase'
 import { loginSchema } from '@/lib/validators'
 import { createToken, setSession, clearSession, getSession } from '@/lib/auth'
 
@@ -19,16 +19,48 @@ export async function POST(request: NextRequest) {
     const { email, password } = validationResult.data
 
     // Find admin by email
-    const admin = await prisma.admin.findUnique({
-      where: { email },
-    })
+    const snapshot = await adminsCollection
+      .where('email', '==', email)
+      .limit(1)
+      .get()
 
-    if (!admin) {
+    if (snapshot.empty) {
+      // If no admin exists and this is the default admin credentials, create one
+      if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
+        const hashedPassword = await bcrypt.hash(password, 10)
+        const adminRef = await adminsCollection.add({
+          email,
+          password: hashedPassword,
+          name: 'Admin',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+
+        const token = await createToken({
+          adminId: adminRef.id,
+          email,
+        })
+
+        await setSession(token)
+
+        return NextResponse.json({
+          success: true,
+          admin: {
+            id: adminRef.id,
+            email,
+            name: 'Admin',
+          },
+        })
+      }
+
       return NextResponse.json(
         { error: 'Invalid email or password' },
         { status: 401 }
       )
     }
+
+    const adminDoc = snapshot.docs[0]
+    const admin = { id: adminDoc.id, ...adminDoc.data() } as Admin & { id: string }
 
     // Verify password
     const isValidPassword = await bcrypt.compare(password, admin.password)
@@ -82,39 +114,22 @@ export async function DELETE() {
 export async function GET() {
   try {
     const session = await getSession()
-
     if (!session) {
       return NextResponse.json(
-        { error: 'Not authenticated' },
+        { authenticated: false },
         { status: 401 }
       )
     }
 
-    const admin = await prisma.admin.findUnique({
-      where: { id: session.adminId },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-      },
-    })
-
-    if (!admin) {
-      return NextResponse.json(
-        { error: 'Admin not found' },
-        { status: 404 }
-      )
-    }
-
     return NextResponse.json({
-      success: true,
-      admin,
+      authenticated: true,
+      admin: session,
     })
   } catch (error) {
     console.error('Session check error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { authenticated: false },
+      { status: 401 }
     )
   }
 }

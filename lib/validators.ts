@@ -65,8 +65,9 @@ export type RegistrationInput = z.infer<typeof registrationSchema>
 export type LoginInput = z.infer<typeof loginSchema>
 export type StatusUpdateInput = z.infer<typeof statusUpdateSchema>
 
-// Departments list (CSPIT & DEPSTAR)
+// Departments list (All CHARUSAT Faculties)
 export const DEPARTMENTS = [
+  // CSPIT Departments
   'CSPIT - AIML',
   'CSPIT - CSE',
   'CSPIT - IT',
@@ -75,9 +76,19 @@ export const DEPARTMENTS = [
   'CSPIT - EC',
   'CSPIT - ME',
   'CSPIT - CL',
+  // DEPSTAR Departments
   'DEPSTAR - IT',
   'DEPSTAR - CE',
   'DEPSTAR - CSE',
+  // Other Faculties
+  'PDPIAS',
+  'BDIAS',
+  'IIIM',
+  'CLASS',
+  'RPCP',
+  'CMPICA',
+  'MTIN',
+  'ARIP',
 ] as const
 
 // Year options (Only 1st and 2nd year students are eligible)

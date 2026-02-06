@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
+import { teamsCollection, Team } from '@/lib/firebase'
 import { getSession } from '@/lib/auth'
 import { statusUpdateSchema } from '@/lib/validators'
 import { sendStatusUpdateEmail } from '@/lib/mailer'
@@ -28,59 +28,58 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const department = searchParams.get('department')
     const status = searchParams.get('status')
-    const search = searchParams.get('search')
+    const search = searchParams.get('search')?.toLowerCase()
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
 
-    // Build filter conditions
-    const where: any = {}
+    // Fetch all teams
+    const snapshot = await teamsCollection.orderBy('createdAt', 'desc').get()
+    
+    let teams: (Team & { id: string })[] = []
+    snapshot.forEach((doc) => {
+      teams.push({ id: doc.id, ...doc.data() } as Team & { id: string })
+    })
 
+    // Apply filters
     if (department && department !== 'all') {
-      where.department = department
+      teams = teams.filter(t => t.department === department)
     }
 
     if (status && status !== 'all') {
-      where.status = status
+      teams = teams.filter(t => t.status === status)
     }
 
     if (search) {
-      where.OR = [
-        { teamName: { contains: search, mode: 'insensitive' } },
-        { registrationId: { contains: search, mode: 'insensitive' } },
-        { leaderEmail: { contains: search, mode: 'insensitive' } },
-      ]
+      teams = teams.filter(t => 
+        t.teamName.toLowerCase().includes(search) ||
+        t.registrationId.toLowerCase().includes(search) ||
+        t.leaderEmail.toLowerCase().includes(search)
+      )
     }
 
-    // Get total count for pagination
-    const total = await prisma.team.count({ where })
+    const total = teams.length
 
-    // Fetch teams with members
-    const teams = await prisma.team.findMany({
-      where,
-      include: {
-        members: {
-          orderBy: { isLeader: 'desc' },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-      skip: (page - 1) * limit,
-      take: limit,
+    // Paginate
+    const paginatedTeams = teams.slice((page - 1) * limit, page * limit)
+
+    // Calculate statistics
+    const allTeamsSnapshot = await teamsCollection.get()
+    const allTeams: Team[] = []
+    allTeamsSnapshot.forEach((doc) => {
+      allTeams.push(doc.data() as Team)
     })
 
-    // Get statistics
-    const stats = await prisma.team.groupBy({
-      by: ['status'],
-      _count: true,
-    })
+    const byStatus: Record<string, number> = {}
+    const byDepartment: Record<string, number> = {}
 
-    const departmentStats = await prisma.team.groupBy({
-      by: ['department'],
-      _count: true,
+    allTeams.forEach(team => {
+      byStatus[team.status] = (byStatus[team.status] || 0) + 1
+      byDepartment[team.department] = (byDepartment[team.department] || 0) + 1
     })
 
     return NextResponse.json({
       success: true,
-      teams,
+      teams: paginatedTeams,
       pagination: {
         page,
         limit,
@@ -88,9 +87,9 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(total / limit),
       },
       stats: {
-        byStatus: stats.reduce((acc, s) => ({ ...acc, [s.status]: s._count }), {}),
-        byDepartment: departmentStats.reduce((acc, d) => ({ ...acc, [d.department]: d._count }), {}),
-        total,
+        byStatus,
+        byDepartment,
+        total: allTeams.length,
       },
     })
   } catch (error) {
@@ -125,11 +124,23 @@ export async function PATCH(request: NextRequest) {
 
     const { teamId, status } = validationResult.data
 
-    const team = await prisma.team.update({
-      where: { id: teamId },
-      data: { status },
-      include: { members: true },
+    const docRef = teamsCollection.doc(teamId)
+    const doc = await docRef.get()
+
+    if (!doc.exists) {
+      return NextResponse.json(
+        { error: 'Team not found' },
+        { status: 404 }
+      )
+    }
+
+    await docRef.update({ 
+      status, 
+      updatedAt: new Date() 
     })
+
+    const updatedDoc = await docRef.get()
+    const team = { id: updatedDoc.id, ...updatedDoc.data() } as Team & { id: string }
 
     // Send status update email
     if (status !== 'PENDING') {
@@ -166,17 +177,17 @@ export async function POST(request: NextRequest) {
 
     const { teamId } = await request.json()
 
-    const team = await prisma.team.findUnique({
-      where: { id: teamId },
-      include: { members: true },
-    })
+    const docRef = teamsCollection.doc(teamId)
+    const doc = await docRef.get()
 
-    if (!team) {
+    if (!doc.exists) {
       return NextResponse.json(
         { error: 'Team not found' },
         { status: 404 }
       )
     }
+
+    const team = doc.data() as Team
 
     // Generate QR code data
     const qrData = JSON.stringify({

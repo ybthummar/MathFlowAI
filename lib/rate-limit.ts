@@ -1,4 +1,4 @@
-import prisma from './prisma'
+import { rateLimitCollection } from './firebase'
 
 const RATE_LIMIT_WINDOW = 60 * 1000 // 1 minute
 const MAX_REQUESTS = 5 // 5 requests per minute
@@ -8,75 +8,48 @@ export async function checkRateLimit(ip: string, endpoint: string): Promise<bool
   const windowStart = new Date(now.getTime() - RATE_LIMIT_WINDOW)
   
   try {
-    // Clean up old entries
-    await prisma.rateLimit.deleteMany({
-      where: {
-        windowStart: {
-          lt: windowStart,
-        },
-      },
-    })
+    const docId = `${ip}_${endpoint}`.replace(/[/.:]/g, '_')
+    const docRef = rateLimitCollection.doc(docId)
+    const doc = await docRef.get()
     
-    // Check current rate limit
-    const existing = await prisma.rateLimit.findUnique({
-      where: {
-        ip_endpoint: {
-          ip,
-          endpoint,
-        },
-      },
-    })
-    
-    if (!existing) {
+    if (!doc.exists) {
       // Create new entry
-      await prisma.rateLimit.create({
-        data: {
-          ip,
-          endpoint,
-          count: 1,
-          windowStart: now,
-        },
+      await docRef.set({
+        ip,
+        endpoint,
+        count: 1,
+        windowStart: now,
       })
       return true
     }
     
+    const data = doc.data()!
+    const existingWindowStart = data.windowStart?.toDate?.() || new Date(data.windowStart)
+    
     // Check if within window
-    if (existing.windowStart > windowStart) {
-      if (existing.count >= MAX_REQUESTS) {
+    if (existingWindowStart > windowStart) {
+      if (data.count >= MAX_REQUESTS) {
         return false // Rate limited
       }
       
       // Increment count
-      await prisma.rateLimit.update({
-        where: {
-          ip_endpoint: {
-            ip,
-            endpoint,
-          },
-        },
-        data: {
-          count: existing.count + 1,
-        },
+      await docRef.update({
+        count: data.count + 1,
       })
       return true
     }
     
     // Reset window
-    await prisma.rateLimit.update({
-      where: {
-        ip_endpoint: {
-          ip,
-          endpoint,
-        },
-      },
-      data: {
-        count: 1,
-        windowStart: now,
-      },
+    await docRef.set({
+      ip,
+      endpoint,
+      count: 1,
+      windowStart: now,
     })
     return true
   } catch (error) {
-    console.error('Rate limit check failed:', error)
-    return true // Allow request on error
+    console.error('Rate limit error:', error)
+    // Allow request on error (fail open)
+    return true
   }
 }

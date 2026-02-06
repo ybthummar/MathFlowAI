@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
+import { teamsCollection, Team } from '@/lib/firebase'
 import { getSession } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
@@ -16,27 +16,22 @@ export async function GET(request: NextRequest) {
     const department = searchParams.get('department')
     const status = searchParams.get('status')
 
-    // Build filter conditions
-    const where: any = {}
+    // Fetch all teams
+    const snapshot = await teamsCollection.orderBy('createdAt', 'desc').get()
+    
+    let teams: (Team & { id: string })[] = []
+    snapshot.forEach((doc) => {
+      teams.push({ id: doc.id, ...doc.data() } as Team & { id: string })
+    })
 
+    // Apply filters
     if (department && department !== 'all') {
-      where.department = department
+      teams = teams.filter(t => t.department === department)
     }
 
     if (status && status !== 'all') {
-      where.status = status
+      teams = teams.filter(t => t.status === status)
     }
-
-    // Fetch all teams with members
-    const teams = await prisma.team.findMany({
-      where,
-      include: {
-        members: {
-          orderBy: { isLeader: 'desc' },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    })
 
     // Generate CSV content
     const headers = [
@@ -66,15 +61,24 @@ export async function GET(request: NextRequest) {
     ]
 
     const rows = teams.map(team => {
+      // Sort members with leader first
+      const sortedMembers = [...team.members].sort((a, b) => 
+        (b.isLeader ? 1 : 0) - (a.isLeader ? 1 : 0)
+      )
+
       const memberData = []
       for (let i = 0; i < 5; i++) {
-        const member = team.members[i]
+        const member = sortedMembers[i]
         if (member) {
           memberData.push(member.name, member.email, member.rollNo)
         } else {
           memberData.push('', '', '')
         }
       }
+
+      const createdAt = team.createdAt instanceof Date 
+        ? team.createdAt 
+        : new Date(team.createdAt)
 
       return [
         team.registrationId,
@@ -85,11 +89,11 @@ export async function GET(request: NextRequest) {
         team.leaderPhone,
         team.members.length.toString(),
         ...memberData,
-        new Date(team.createdAt).toISOString(),
+        createdAt.toISOString(),
       ]
     })
 
-    // Escape and format CSV
+    // Escape CSV values
     const escapeCSV = (value: string) => {
       if (value.includes(',') || value.includes('"') || value.includes('\n')) {
         return `"${value.replace(/"/g, '""')}"`
@@ -98,16 +102,15 @@ export async function GET(request: NextRequest) {
     }
 
     const csvContent = [
-      headers.join(','),
+      headers.map(escapeCSV).join(','),
       ...rows.map(row => row.map(escapeCSV).join(',')),
     ].join('\n')
 
-    // Return CSV file
     return new NextResponse(csvContent, {
       status: 200,
       headers: {
         'Content-Type': 'text/csv',
-        'Content-Disposition': `attachment; filename="registrations-${new Date().toISOString().split('T')[0]}.csv"`,
+        'Content-Disposition': `attachment; filename="mathflow-ai-registrations-${new Date().toISOString().split('T')[0]}.csv"`,
       },
     })
   } catch (error) {
