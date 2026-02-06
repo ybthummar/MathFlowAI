@@ -279,7 +279,7 @@ Contact: events@mathflowai.com
 
         {/* Important Notice */}
         <AnimatedSection variant="fade-up" delay={500}>
-        <Card className="mb-6 border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950/20">>
+        <Card className="mb-6 border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950/20">
           <CardContent className="py-4">
             <h4 className="font-semibold mb-2">📌 Important Information</h4>
             <ul className="text-sm text-muted-foreground space-y-1">
