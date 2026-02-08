@@ -15,10 +15,11 @@ interface RegistrationEmailData {
   leaderEmail: string
   department: string
   members: TeamMember[]
+  pdfReceipt?: Buffer
 }
 
 export async function sendConfirmationEmail(data: RegistrationEmailData) {
-  const { teamName, registrationId, leaderName, leaderEmail, department, members } = data
+  const { teamName, registrationId, leaderName, leaderEmail, department, members, pdfReceipt } = data
   
   const membersList = members
     .map((m, i) => `${i + 1}. ${m.name} (${m.rollNo})`)
@@ -96,6 +97,7 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
         <ul style="margin: 0; padding-left: 20px; color: #92400e; font-size: 14px;">
           <li>Save your Registration ID - you'll need it on event day</li>
           <li>All team members must carry valid college ID cards</li>
+          <li>📄 Download and print the attached PDF receipt</li>
           <li>Report at the venue 30 minutes before the event</li>
           <li>Late arrivals may lead to disqualification</li>
         </ul>
@@ -132,12 +134,24 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
   const allEmails = [leaderEmail, ...members.map(m => m.email).filter(e => e !== leaderEmail)]
   
   try {
-    const result = await resend.emails.send({
+    const emailOptions: any = {
       from: process.env.EMAIL_FROM || 'MathFlow AI <noreply@resend.dev>',
       to: allEmails,
       subject: `✅ Registration Confirmed - ${teamName} | MathFlow AI`,
       html: emailHtml,
-    })
+    }
+
+    // Attach PDF receipt if provided
+    if (pdfReceipt) {
+      emailOptions.attachments = [
+        {
+          filename: `MathFlowAI-Receipt-${registrationId}.pdf`,
+          content: pdfReceipt,
+        },
+      ]
+    }
+
+    const result = await resend.emails.send(emailOptions)
     
     return { success: true, data: result }
   } catch (error) {

@@ -4,6 +4,7 @@ import { registrationSchema } from '@/lib/validators'
 import { sendConfirmationEmail } from '@/lib/mailer'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { generateRegistrationId } from '@/lib/utils'
+import { generateReceiptPDF } from '@/lib/pdf-generator'
 
 export async function POST(request: NextRequest) {
   try {
@@ -103,20 +104,42 @@ export async function POST(request: NextRequest) {
 
     const docRef = await teamsCollection.add(teamData)
 
-    // Send confirmation email (async, don't block response)
+    // Generate PDF receipt and send confirmation email (async, don't block response)
     const leader = members.find(m => m.isLeader) || members[0]
-    sendConfirmationEmail({
-      teamName: data.teamName,
+    
+    // Generate PDF receipt
+    generateReceiptPDF({
       registrationId,
-      leaderName: leader.name,
-      leaderEmail: data.leaderEmail,
+      teamName: data.teamName,
       department: data.department,
+      leaderEmail: data.leaderEmail,
+      leaderPhone: data.leaderPhone,
       members: members.map(m => ({
         name: m.name,
         email: m.email,
         rollNo: m.rollNo,
+        year: m.year,
+        isLeader: m.isLeader,
       })),
-    }).catch(console.error)
+      createdAt: now,
+    })
+      .then(pdfBuffer => {
+        // Send email with PDF attachment
+        return sendConfirmationEmail({
+          teamName: data.teamName,
+          registrationId,
+          leaderName: leader.name,
+          leaderEmail: data.leaderEmail,
+          department: data.department,
+          members: members.map(m => ({
+            name: m.name,
+            email: m.email,
+            rollNo: m.rollNo,
+          })),
+          pdfReceipt: pdfBuffer,
+        })
+      })
+      .catch(console.error)
 
     return NextResponse.json({
       success: true,

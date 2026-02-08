@@ -19,6 +19,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { CountdownTimer } from "@/components/countdown-timer"
 import { AnimatedSection } from "@/components/ui/animated-section"
+import VaporizeTextCycle, { Tag } from "@/components/ui/vapour-text-effect"
 
 export default function HomePage() {
   return (
@@ -44,9 +45,27 @@ export default function HomePage() {
             </AnimatedSection>
 
             <AnimatedSection variant="blur-in" delay={200} duration={800}>
-              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                <span className="gradient-text">MathFlow AI</span>
-              </h1>
+              <div className="h-32 flex items-center justify-center">
+                <VaporizeTextCycle
+                  texts={["MathFlow AI", "Have you registered?"]}
+                  font={{
+                    fontFamily: "Inter, system-ui, sans-serif",
+                    fontSize: "60px",
+                    fontWeight: 700
+                  }}
+                  color="rgb(139, 92, 246)"
+                  spread={5}
+                  density={6}
+                  animation={{
+                    vaporizeDuration: 2.5,
+                    fadeInDuration: 1.2,
+                    waitDuration: 1.5
+                  }}
+                  direction="left-to-right"
+                  alignment="center"
+                  tag={Tag.H1}
+                />
+              </div>
             </AnimatedSection>
 
             <AnimatedSection variant="fade-up" delay={400}>
@@ -110,8 +129,8 @@ export default function HomePage() {
                 iconColor: "text-green-600",
                 borderHover: "hover:border-green-300 hover-glow",
                 title: "Team Size",
-                desc: "3-5 Members",
-                detail: "Form your dream team and compete!",
+                desc: "Up to 3 Members",
+                detail: "At least 1 from 1st year, others from 2nd year!",
               },
             ].map((card, i) => (
               <AnimatedSection key={card.title} variant="fade-up" delay={i * 150}>
@@ -160,10 +179,10 @@ export default function HomePage() {
                 <CardContent className="space-y-4">
                   <ul className="space-y-2 text-sm">
                     {[
-                      "Mathematical puzzle-based challenges",
-                      "Team collaboration required",
-                      "Time-bound escape scenarios",
-                      "Logical reasoning & pattern recognition",
+                      "Mathematical chain-based puzzles",
+                      "Class 11-12 Maths & Engineering Maths 1 & 2",
+                      "Logical reasoning & problem solving",
+                      "Pen & paper only (No mobiles/laptops/internet)",
                     ].map((item, j) => (
                       <li key={j} className="flex items-start gap-2">
                         <Zap className="h-4 w-4 text-violet-600 mt-0.5 shrink-0" />
@@ -173,7 +192,8 @@ export default function HomePage() {
                   </ul>
                   <div className="pt-4 border-t">
                     <p className="text-sm text-muted-foreground">
-                      <strong>Duration:</strong> 90 minutes
+                      <strong>Duration:</strong> 60 minutes<br />
+                      <strong>Outcome:</strong> Top 20 teams qualify for Round 2
                     </p>
                   </div>
                 </CardContent>
@@ -198,10 +218,10 @@ export default function HomePage() {
                 <CardContent className="space-y-4">
                   <ul className="space-y-2 text-sm">
                     {[
-                      "AI & Machine Learning tasks",
-                      "Prompt engineering challenges",
-                      "Problem-solving with AI tools",
-                      "Innovation & creativity scoring",
+                      "Dataset-based ML task",
+                      "Data cleaning, feature engineering & modeling",
+                      "Problem analysis and solution design",
+                      "Use of internet, AI tools & resources allowed",
                     ].map((item, j) => (
                       <li key={j} className="flex items-start gap-2">
                         <Target className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
@@ -211,7 +231,8 @@ export default function HomePage() {
                   </ul>
                   <div className="pt-4 border-t">
                     <p className="text-sm text-muted-foreground">
-                      <strong>Duration:</strong> 120 minutes
+                      <strong>Duration:</strong> 120 minutes<br />
+                      <strong>Note:</strong> Presentation of approach & results
                     </p>
                   </div>
                 </CardContent>
@@ -304,14 +325,17 @@ export default function HomePage() {
                 <CardContent className="pt-6">
                   <ul className="space-y-4">
                     {[
-                      "Teams must have 3-5 members from the same institution",
+                      "Each team can have up to 3 members",
+                      "At least 1 member must be from 1st year, others can be from 2nd year only",
                       "All team members must carry valid college ID cards",
-                      "One person cannot be part of multiple teams",
-                      "Use of external help or internet during rounds is prohibited",
-                      "Decisions of the judges will be final and binding",
-                      "Teams arriving late may be disqualified",
-                      "Maintain decorum and respect fellow participants",
-                      "Electronic devices must be submitted before rounds begin",
+                      "A participant can be part of only one team",
+                      "Round 1: No mobile phones, laptops, or internet (pen & paper only)",
+                      "Round 2: Internet, AI tools, and other resources are allowed",
+                      "Any form of malpractice or unfair means will lead to disqualification",
+                      "The decision of the judges will be final and binding",
+                      "Teams must report on time. Late entries may be disqualified",
+                      "Maintain discipline and respect towards coordinators and fellow participants",
+                      "Electronic devices must be submitted before Round 1 begins",
                     ].map((rule, i) => (
                       <AnimatedSection key={i} variant="fade-right" delay={i * 80}>
                         <li className="flex items-start gap-3 group">
