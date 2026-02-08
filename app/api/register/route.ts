@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
     })
       .then(pdfBuffer => {
         console.log(`PDF receipt generated for team "${data.teamName}" (${registrationId})`)
-        // Send email with PDF attachment to team leader
+        // Send email with PDF attachment to all registered members
         return sendConfirmationEmail({
           teamName: data.teamName,
           registrationId,

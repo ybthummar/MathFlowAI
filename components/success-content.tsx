@@ -75,59 +75,41 @@ export function SuccessContent() {
     }
   }
 
-  const downloadConfirmation = () => {
+  const [downloading, setDownloading] = useState(false)
+
+  const downloadConfirmation = async () => {
     if (!team) return
 
-    // Generate a simple text confirmation
-    const content = `
-========================================
-         MATHFLOW AI
-    REGISTRATION CONFIRMATION
-========================================
+    setDownloading(true)
+    try {
+      const response = await fetch(`/api/register/receipt?id=${team.registrationId}`)
+      if (!response.ok) {
+        throw new Error('Failed to generate receipt')
+      }
 
-Registration ID: ${team.registrationId}
-Team Name: ${team.teamName}
-Department: ${team.department}
-Status: ${team.status}
-Registered On: ${new Date(team.createdAt).toLocaleString()}
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `MathFlowAI-Receipt-${team.registrationId}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
 
-----------------------------------------
-TEAM MEMBERS
-----------------------------------------
-${team.members.map((m, i) => `
-${i + 1}. ${m.name}${m.isLeader ? ' (Team Leader)' : ''}
-   Email: ${m.email}
-   Roll No: ${m.rollNo}
-   Year: ${m.year}
-`).join('')}
-
-----------------------------------------
-IMPORTANT INFORMATION
-----------------------------------------
-• Event Date: February 21, 2026
-• Venue: Seminar Hall 2nd Floor, CSPIT-A6 Building, CHARUSAT
-• Reporting Time: 8:30 AM
-• Bring this confirmation and valid ID
-
-----------------------------------------
-Contact: socialmedia.cspit.aiml@charusat.ac.in
-========================================
-    `
-
-    const blob = new Blob([content], { type: "text/plain" })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = `registration-${team.registrationId}.txt`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-
-    toast({
-      title: "Downloaded!",
-      description: "Confirmation file has been downloaded",
-    })
+      toast({
+        title: "Downloaded!",
+        description: "PDF receipt has been downloaded",
+      })
+    } catch (err) {
+      toast({
+        title: "Download Failed",
+        description: "Could not download the receipt. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setDownloading(false)
+    }
   }
 
   if (loading) {
@@ -287,7 +269,7 @@ Contact: socialmedia.cspit.aiml@charusat.ac.in
               <li>• Venue: <strong>Seminar Hall 2nd Floor, CSPIT-A6 Building, CHARUSAT</strong></li>
               <li>• Reporting Time: <strong>8:30 AM</strong></li>
               <li>• All team members must carry valid college ID cards</li>
-              <li>• A confirmation email has been sent to all team members</li>
+              <li>• A confirmation email has been sent to the team leader</li>
             </ul>
           </CardContent>
         </Card>
@@ -296,9 +278,18 @@ Contact: socialmedia.cspit.aiml@charusat.ac.in
         {/* Action Buttons */}
         <AnimatedSection variant="fade-up" delay={600}>
         <div className="flex flex-col sm:flex-row gap-4">
-          <Button onClick={downloadConfirmation} className="flex-1 hover-lift">
-            <Download className="mr-2 h-4 w-4" />
-            Download Confirmation
+          <Button onClick={downloadConfirmation} disabled={downloading} className="flex-1 hover-lift">
+            {downloading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating PDF...
+              </>
+            ) : (
+              <>
+                <Download className="mr-2 h-4 w-4" />
+                Download Receipt (PDF)
+              </>
+            )}
           </Button>
           <Button asChild variant="outline" className="flex-1 hover-lift">
             <Link href="/">

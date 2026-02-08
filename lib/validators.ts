@@ -40,8 +40,8 @@ export const registrationSchema = z.object({
     .regex(/^[6-9]\d{9}$/, 'Invalid phone number (must be 10 digits starting with 6-9)'),
   members: z
     .array(memberSchema)
-    .min(1, 'Team must have at least 1 member')
-    .max(3, 'Team can have at most 3 members')
+    .min(3, 'Team must have at least 3 members')
+    .max(5, 'Team can have at most 5 members')
     .refine(
       (members) => members.some(m => m.year === '1st Year'),
       'At least one member must be from 1st year'

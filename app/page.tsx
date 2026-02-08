@@ -274,7 +274,7 @@ export default function HomePage() {
               {
                 place: "1st Place",
                 prize: "₹5,000",
-                extra: "+ Certificates & Swag",
+                extra: "+ Certificates",
                 trophySize: "h-16 w-16",
                 trophyColor: "text-yellow-500",
                 border: "border-yellow-400/50",

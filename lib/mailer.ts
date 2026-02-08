@@ -130,19 +130,13 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
 </html>
 `
 
-  // Send email to team leader (primary recipient)
-  // Other members are CC'd so the leader always gets full details
-  const ccEmails = members
-    .map(m => m.email)
-    .filter(e => e !== leaderEmail)
-  
+  // Send email to team leader only
   try {
     const fromAddress = process.env.EMAIL_FROM || 'MATH for AI <onboarding@resend.dev>'
     
     const emailOptions: any = {
       from: fromAddress,
       to: [leaderEmail],
-      ...(ccEmails.length > 0 && { cc: ccEmails }),
       subject: `✅ Registration Confirmed - ${teamName} | MathFlow AI`,
       html: emailHtml,
     }

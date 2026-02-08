@@ -39,6 +39,8 @@ export function RegistrationForm() {
       leaderPhone: "",
       members: [
         { name: "", email: "", phone: "", rollNo: "", year: "", isLeader: true },
+        { name: "", email: "", phone: "", rollNo: "", year: "", isLeader: false },
+        { name: "", email: "", phone: "", rollNo: "", year: "", isLeader: false },
       ],
       agreedToRules: false,
     },
@@ -53,13 +55,13 @@ export function RegistrationForm() {
   const watchMembers = form.watch("members")
 
   const addMember = () => {
-    if (fields.length < 3) {
+    if (fields.length < 5) {
       append({ name: "", email: "", phone: "", rollNo: "", year: "", isLeader: false })
     }
   }
 
   const removeMember = (index: number) => {
-    if (fields.length > 1 && index > 0) {
+    if (fields.length > 3 && index > 0) {
       remove(index)
     }
   }
@@ -259,9 +261,9 @@ export function RegistrationForm() {
         {currentStep === 2 && (
           <Card>
             <CardHeader>
-              <CardTitle>Team Members ({fields.length}/3)</CardTitle>
+              <CardTitle>Team Members ({fields.length}/5)</CardTitle>
               <CardDescription>
-                Add 1-3 team members. At least 1 must be from 1st year. The first member is the team leader.
+                Add 3-5 team members. At least 1 must be from 1st year. The first member is the team leader.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -291,7 +293,7 @@ export function RegistrationForm() {
                         </>
                       )}
                     </h4>
-                    {index > 0 && fields.length > 1 && (
+                    {index > 0 && fields.length > 3 && (
                       <Button
                         type="button"
                         variant="ghost"
@@ -385,7 +387,7 @@ export function RegistrationForm() {
                 </div>
               ))}
 
-              {fields.length < 3 && (
+              {fields.length < 5 && (
                 <Button
                   type="button"
                   variant="outline"
@@ -393,7 +395,7 @@ export function RegistrationForm() {
                   onClick={addMember}
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  Add Member ({fields.length}/3)
+                  Add Member ({fields.length}/5)
                 </Button>
               )}
 
