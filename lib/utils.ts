@@ -7,7 +7,8 @@ export function cn(...inputs: ClassValue[]) {
 
 export function generateRegistrationId(): string {
   const timestamp = Date.now().toString(36).toUpperCase()
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase()
+  // Use crypto for stronger uniqueness (8 hex chars = ~4 billion possibilities)
+  const random = crypto.randomUUID().replace(/-/g, '').substring(0, 8).toUpperCase()
   return `MFA-${timestamp}-${random}`
 }
 

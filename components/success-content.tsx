@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { CheckCircle2, Download, Home, Loader2, Copy, Check } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -144,6 +145,9 @@ export function SuccessContent() {
         {/* Success Header */}
         <AnimatedSection variant="scale-up" duration={600}>
         <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <Image src="/logo.png" alt="MATH for AI Club" width={64} height={64} className="rounded-xl" />
+          </div>
           <div className="h-20 w-20 rounded-full gradient-bg flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
             <CheckCircle2 className="h-10 w-10 text-white" />
           </div>
@@ -215,7 +219,14 @@ export function SuccessContent() {
               <div className="flex flex-col sm:flex-row sm:justify-between py-2 gap-1">
                 <span className="text-muted-foreground">Registered On</span>
                 <span className="font-medium">
-                  {new Date(team.createdAt).toLocaleDateString()}
+                  {new Date(team.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric',
+                  })}{' '}
+                  <span className="text-muted-foreground text-xs">
+                    {new Date(team.createdAt).toLocaleTimeString('en-US', {
+                      hour: '2-digit', minute: '2-digit', hour12: true,
+                    })}
+                  </span>
                 </span>
               </div>
             </div>

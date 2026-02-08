@@ -1,8 +1,9 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { Brain, Menu, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "./theme-toggle"
@@ -23,11 +24,15 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-blue-600">
-            <Brain className="h-5 w-5 text-white" />
-          </div>
+          <Image
+            src="/logo.png"
+            alt="MATH for AI Club"
+            width={36}
+            height={36}
+            className="rounded-lg"
+          />
           <span className="hidden font-bold sm:inline-block">
-            MATH for AI
+            MATH for AI Club
           </span>
         </Link>
 

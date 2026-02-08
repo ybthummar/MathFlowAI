@@ -5,13 +5,14 @@ import { ThemeProvider } from "@/components/layout/theme-provider"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Toaster } from "@/components/ui/toaster"
+import { SplashScreen } from "@/components/layout/splash-screen"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "MathFlow AI | MATH for AI",
-  description: "MathFlow AI - A flagship event by MATH for AI. Join the ultimate Math and AI escape room challenge. Form your team and compete!",
-  keywords: ["MathFlow", "MATH for AI", "math", "AI", "escape room", "hackathon", "college event", "technical event"],
+  title: "MathFlow AI | MATH for AI Club",
+  description: "MathFlow AI - A flagship event by MATH for AI Club. Join the ultimate Math and AI escape room challenge. Form your team and compete!",
+  keywords: ["MathFlow", "MATH for AI", "MATH for AI Club", "math", "AI", "escape room", "hackathon", "college event", "technical event"],
 }
 
 export default function RootLayout({
@@ -28,11 +29,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+          <SplashScreen>
+            <div className="relative flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </SplashScreen>
           <Toaster />
         </ThemeProvider>
       </body>

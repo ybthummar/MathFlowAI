@@ -114,6 +114,7 @@ export async function POST(request: NextRequest) {
       department: data.department,
       leaderEmail: data.leaderEmail,
       leaderPhone: data.leaderPhone,
+      status: 'PENDING',
       members: members.map(m => ({
         name: m.name,
         email: m.email,
@@ -193,6 +194,17 @@ export async function GET(request: NextRequest) {
     const doc = snapshot.docs[0]
     const team = doc.data() as Team
 
+    // Convert Firestore Timestamp to ISO string for JSON serialization
+    let createdAtISO: string
+    const rawDate = team.createdAt as unknown
+    if (rawDate && typeof rawDate === 'object' && 'toDate' in rawDate && typeof (rawDate as Record<string, unknown>).toDate === 'function') {
+      createdAtISO = (rawDate as { toDate: () => Date }).toDate().toISOString()
+    } else if (rawDate && typeof rawDate === 'object' && '_seconds' in rawDate) {
+      createdAtISO = new Date((rawDate as { _seconds: number })._seconds * 1000).toISOString()
+    } else {
+      createdAtISO = new Date(rawDate as string | number).toISOString()
+    }
+
     // Sort members with leader first
     const sortedMembers = [...team.members].sort((a, b) => 
       (b.isLeader ? 1 : 0) - (a.isLeader ? 1 : 0)
@@ -206,7 +218,7 @@ export async function GET(request: NextRequest) {
         department: team.department,
         leaderEmail: team.leaderEmail,
         status: team.status,
-        createdAt: team.createdAt,
+        createdAt: createdAtISO,
         members: sortedMembers.map(m => ({
           name: m.name,
           email: m.email,

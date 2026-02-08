@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { Brain, Instagram, Linkedin, Mail, MapPin } from "lucide-react"
+import Image from "next/image"
+import { Instagram, Linkedin, Mail, MapPin } from "lucide-react"
 
 export function Footer() {
   return (
@@ -9,13 +10,17 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-blue-600">
-                <Brain className="h-5 w-5 text-white" />
-              </div>
-              <span className="font-bold">MathFlow AI</span>
+              <Image
+                src="/logo.png"
+                alt="MATH for AI Club"
+                width={36}
+                height={36}
+                className="rounded-lg"
+              />
+              <span className="font-bold">MATH for AI Club</span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              A flagship event by MATH for AI - Where Mathematics meets Artificial Intelligence.
+              A flagship event by MATH for AI Club - Where Mathematics meets Artificial Intelligence.
             </p>
           </div>
 
@@ -82,7 +87,8 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>© 2026 MATH for AI - MathFlow AI Event. All rights reserved.</p>
+          <p>&copy; 2026 MATH for AI Club - MathFlow AI Event. All rights reserved.</p>
+          <p className="mt-1 text-xs">Website by Yug Thummar</p>
         </div>
       </div>
     </footer>

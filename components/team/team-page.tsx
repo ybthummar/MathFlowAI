@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { Sparkles, Users } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,122 +9,57 @@ import TeamSection, { TeamCategory } from "@/components/ui/team"
 import type { TeamMember } from "@/components/ui/team"
 
 // ─────────────────────────── TEAM DATA ───────────────────────────
-// Replace placeholder images with real photos.
-// Use /team/name.jpg in /public/team/ or any external URL.
 
 const TEAM_CATEGORIES = [
   {
-    title: "Core Leadership",
+    title: "Faculty Coordinators",
     members: [
-      {
-        name: "President Name",
-        role: "President",
-        avatar: "/team/president.jpg",
-        link: "#",
-      },
-      {
-        name: "Vice President Name",
-        role: "Vice President",
-        avatar: "/team/vice-president.jpg",
-        link: "#",
-      },
+      { name: "Mukti Patel", role: "Faculty Coordinator", avatar: "/team/mukti-patel.jpg" },
+      { name: "Bhargav Shobhana", role: "Faculty Coordinator", avatar: "/team/bhargav-shobhana.jpg" },
     ],
   },
   {
-    title: "Tech Team",
+    title: "Core Committee",
     members: [
-      {
-        name: "Tech Lead Name",
-        role: "Tech Lead",
-        avatar: "/team/tech-lead.jpg",
-        link: "#",
-      },
-      {
-        name: "Tech Member 1",
-        role: "Developer",
-        avatar: "/team/tech-1.jpg",
-        link: "#",
-      },
-      {
-        name: "Tech Member 2",
-        role: "Developer",
-        avatar: "/team/tech-2.jpg",
-        link: "#",
-      },
+      { name: "Yash Davda", role: "President", avatar: "/team/yash-davda.jpg" },
+      { name: "Dhwani Navadia", role: "Vice President", avatar: "/team/dhwani-navadia.jpg" },
+      { name: "Krish Singh", role: "Secretary", avatar: "/team/krish-singh.jpg" },
+      { name: "Hasti Bhalodiya", role: "Treasurer", avatar: "/team/hasti-bhalodiya.jpg" },
     ],
   },
   {
-    title: "Website Team",
+    title: "Promotion & Campaign Team",
     members: [
-      {
-        name: "Web Lead Name",
-        role: "Web Lead",
-        avatar: "/team/web-lead.jpg",
-        link: "#",
-      },
-      {
-        name: "Web Member 1",
-        role: "Frontend Dev",
-        avatar: "/team/web-1.jpg",
-        link: "#",
-      },
+      { name: "Tirthkumar Kachhadiya", role: "Promotion & Campaign", avatar: "/team/tirthkumar-kachhadiya.jpg" },
+      { name: "Himay Thummar", role: "Promotion & Campaign", avatar: "/team/himay-thummar.jpg" },
+      { name: "Hetvi Patoliya", role: "Promotion & Campaign", avatar: "/team/hetvi-patoliya.jpg" },
     ],
   },
   {
-    title: "Event Management",
+    title: "Design & Creative Team",
     members: [
-      {
-        name: "Event Head Name",
-        role: "Event Head",
-        avatar: "/team/event-head.jpg",
-        link: "#",
-      },
-      {
-        name: "Event Member 1",
-        role: "Coordinator",
-        avatar: "/team/event-1.jpg",
-        link: "#",
-      },
-      {
-        name: "Event Member 2",
-        role: "Coordinator",
-        avatar: "/team/event-2.jpg",
-        link: "#",
-      },
+      { name: "Ayushi Hirpara", role: "Design & Creative", avatar: "/team/ayushi-hirpara.jpg" },
+      { name: "Mahi Savani", role: "Design & Creative", avatar: "/team/mahi-savani.jpg" },
     ],
   },
   {
-    title: "Design & Creative",
+    title: "Technical Team",
     members: [
-      {
-        name: "Design Lead Name",
-        role: "Design Lead",
-        avatar: "/team/design-lead.jpg",
-        link: "#",
-      },
-      {
-        name: "Design Member 1",
-        role: "Graphic Designer",
-        avatar: "/team/design-1.jpg",
-        link: "#",
-      },
+      { name: "Hitarth Khatiwala", role: "Technical Team", avatar: "/team/hitarth-khatiwala.jpg" },
+      { name: "Devang Dhandhukiya", role: "Technical Team", avatar: "/team/devang-dhandhukiya.jpg" },
     ],
   },
   {
-    title: "PR & Media",
+    title: "Event Management Team",
     members: [
-      {
-        name: "PR Lead Name",
-        role: "PR Lead",
-        avatar: "/team/pr-lead.jpg",
-        link: "#",
-      },
-      {
-        name: "Media Member 1",
-        role: "Photographer",
-        avatar: "/team/media-1.jpg",
-        link: "#",
-      },
+      { name: "Priyansh Vadukiya", role: "Event Management", avatar: "/team/priyansh-vadukiya.jpg" },
+      { name: "Dhriti Patel", role: "Event Management", avatar: "/team/dhriti-patel.jpg" },
+    ],
+  },
+  {
+    title: "Website Development",
+    members: [
+      { name: "Yug Thummar", role: "Website Developer", avatar: "/team/yug-thummar.jpg" },
     ],
   },
 ]
@@ -146,6 +82,9 @@ export function TeamPage() {
 
         <div className="container relative">
           <AnimatedSection variant="fade-up" className="mx-auto max-w-3xl text-center">
+            <div className="flex justify-center mb-4">
+              <Image src="/logo.png" alt="MATH for AI Club" width={80} height={80} className="rounded-xl" />
+            </div>
             <Badge variant="secondary" className="mb-4 animate-bounce-subtle">
               <Sparkles className="mr-1 h-3 w-3" /> Meet the Crew
             </Badge>
@@ -153,8 +92,8 @@ export function TeamPage() {
               Our <span className="gradient-text">Amazing Team</span>
             </h1>
             <p className="mt-4 sm:mt-6 text-base sm:text-lg text-muted-foreground md:text-xl max-w-2xl mx-auto px-2">
-              The passionate minds behind <strong>MATH for AI</strong> who make
-              MathFlow AI possible. From leadership to logistics, design to code -
+              The passionate minds behind <strong>MATH for AI Club</strong> who make
+              MathFlow AI possible. From faculty coordinators to every team -
               meet the people who bring it all together.
             </p>
             <div className="mt-8 flex items-center justify-center gap-3 text-sm text-muted-foreground">

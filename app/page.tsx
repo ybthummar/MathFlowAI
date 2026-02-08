@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import {
   ArrowRight,
   Brain,
@@ -56,6 +57,16 @@ export default function HomePage() {
         <div className="container relative">
           <div className="mx-auto max-w-3xl text-center">
             <AnimatedSection variant="fade-down" duration={600}>
+              <div className="flex justify-center mb-4">
+                <Image
+                  src="/logo.png"
+                  alt="MATH for AI Club"
+                  width={80}
+                  height={80}
+                  className="rounded-xl shadow-lg"
+                  priority
+                />
+              </div>
               <Badge variant="secondary" className="mb-4 animate-bounce-subtle">
                 <Sparkles className="mr-1 h-3 w-3" /> Upcoming Events
               </Badge>
@@ -87,7 +98,7 @@ export default function HomePage() {
 
             <AnimatedSection variant="fade-up" delay={400}>
               <p className="mt-4 sm:mt-6 text-base sm:text-lg text-white/80 md:text-xl px-2">
-                A flagship event by <strong className="text-white">MATH for AI</strong> - Unlock the power of
+                A flagship event by <strong className="text-white">MATH for AI Club</strong> - Unlock the power of
                 mathematics and artificial intelligence in this thrilling escape room
                 competition. Form your team, solve puzzles, and conquer the challenge!
               </p>
@@ -382,7 +393,7 @@ export default function HomePage() {
               <CardContent className="relative py-8 sm:py-12 text-center px-4 sm:px-6">
                 <h2 className="text-2xl sm:text-3xl font-bold md:text-4xl">Ready to Take the Challenge?</h2>
                 <p className="mt-3 sm:mt-4 text-white/80 max-w-xl mx-auto text-sm sm:text-base">
-                  Join MATH for AI&apos;s flagship event! Form your team, register now,
+                  Join MATH for AI Club&apos;s flagship event! Form your team, register now,
                   and embark on an exciting journey of mathematics and artificial intelligence!
                 </p>
                 <Button
