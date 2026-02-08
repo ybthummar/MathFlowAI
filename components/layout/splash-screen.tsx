@@ -93,7 +93,7 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
             >
               <video
                 ref={videoRef}
-                src="/logo_animation.MOV"
+                src="/logo_animation.mp4"
                 className="w-full rounded-xl shadow-2xl"
                 autoPlay
                 muted

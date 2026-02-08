@@ -10,10 +10,6 @@ import {
   RefreshCw,
   Search,
   Users,
-  CheckCircle,
-  XCircle,
-  Clock,
-  AlertTriangle,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -41,7 +37,6 @@ interface Team {
   department: string
   leaderEmail: string
   leaderPhone: string
-  status: "PENDING" | "APPROVED" | "REJECTED" | "WAITLIST"
   createdAt: string
   members: Member[]
 }
@@ -61,7 +56,6 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
   // Filters
   const [search, setSearch] = useState("")
   const [departmentFilter, setDepartmentFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
 
   // Modal state
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null)
@@ -79,7 +73,6 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
 
       if (search) params.set("search", search)
       if (departmentFilter !== "all") params.set("department", departmentFilter)
-      if (statusFilter !== "all") params.set("status", statusFilter)
 
       const response = await fetch(`/api/admin?${params}`)
       const data = await response.json()
@@ -98,36 +91,11 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
     } finally {
       setLoading(false)
     }
-  }, [pagination.page, search, departmentFilter, statusFilter, toast])
+  }, [pagination.page, search, departmentFilter, toast])
 
   useEffect(() => {
     fetchTeams()
   }, [fetchTeams])
-
-  const updateStatus = async (teamId: string, status: string) => {
-    try {
-      const response = await fetch("/api/admin", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ teamId, status }),
-      })
-
-      if (!response.ok) throw new Error("Failed to update status")
-
-      toast({
-        title: "Status Updated",
-        description: `Team status changed to ${status}`,
-      })
-
-      fetchTeams()
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update team status",
-        variant: "destructive",
-      })
-    }
-  }
 
   const generateQRCode = async (team: Team) => {
     setSelectedTeam(team)
@@ -160,7 +128,6 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
     try {
       const params = new URLSearchParams()
       if (departmentFilter !== "all") params.set("department", departmentFilter)
-      if (statusFilter !== "all") params.set("status", statusFilter)
 
       const response = await fetch(`/api/admin/export?${params}`)
       
@@ -189,24 +156,6 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
     }
   }
 
-  const getStatusBadge = (status: string) => {
-    const variants: Record<string, any> = {
-      PENDING: { variant: "secondary", icon: Clock },
-      APPROVED: { variant: "success", icon: CheckCircle },
-      REJECTED: { variant: "destructive", icon: XCircle },
-      WAITLIST: { variant: "warning", icon: AlertTriangle },
-    }
-
-    const { variant, icon: Icon } = variants[status] || variants.PENDING
-
-    return (
-      <Badge variant={variant} className="flex items-center gap-1">
-        <Icon className="h-3 w-3" />
-        {status}
-      </Badge>
-    )
-  }
-
   return (
     <div className="container py-6">
       {/* Header */}
@@ -230,7 +179,7 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 grid-cols-2 md:grid-cols-4 mb-8">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Teams</CardTitle>
@@ -243,31 +192,11 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Pending</CardTitle>
-            <Clock className="h-4 w-4 text-yellow-500" />
+            <CardTitle className="text-sm font-medium">Total Members</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.byStatus?.PENDING || 0}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Approved</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.byStatus?.APPROVED || 0}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Waitlist</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-orange-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.byStatus?.WAITLIST || 0}</div>
+            <div className="text-2xl font-bold">{stats.totalMembers || 0}</div>
           </CardContent>
         </Card>
       </div>
@@ -306,19 +235,6 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
               </SelectContent>
             </Select>
 
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="PENDING">Pending</SelectItem>
-                <SelectItem value="APPROVED">Approved</SelectItem>
-                <SelectItem value="REJECTED">Rejected</SelectItem>
-                <SelectItem value="WAITLIST">Waitlist</SelectItem>
-              </SelectContent>
-            </Select>
-
             <Button variant="outline" onClick={fetchTeams}>
               <RefreshCw className="mr-2 h-4 w-4" />
               Refresh
@@ -353,7 +269,6 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <h3 className="font-semibold text-lg">{team.teamName}</h3>
-                          {getStatusBadge(team.status)}
                         </div>
                         <div className="grid gap-1 text-sm text-muted-foreground">
                           <p>
@@ -376,21 +291,6 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
                       </div>
 
                       <div className="flex flex-wrap gap-2">
-                        <Select
-                          value={team.status}
-                          onValueChange={(value) => updateStatus(team.id, value)}
-                        >
-                          <SelectTrigger className="w-32">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="PENDING">Pending</SelectItem>
-                            <SelectItem value="APPROVED">Approve</SelectItem>
-                            <SelectItem value="REJECTED">Reject</SelectItem>
-                            <SelectItem value="WAITLIST">Waitlist</SelectItem>
-                          </SelectContent>
-                        </Select>
-
                         <Button
                           variant="outline"
                           size="icon"

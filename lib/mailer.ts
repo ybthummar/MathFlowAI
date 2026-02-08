@@ -139,6 +139,8 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
       to: [leaderEmail],
       subject: `✅ Registration Confirmed - ${teamName} | MathFlow AI`,
       html: emailHtml,
+      reply_to: 'socialmedia.cspit.aiml@charusat.ac.in',
+      text: `Your team ${teamName} is registered successfully for MathFlow AI. Registration ID: ${registrationId}`,
     }
 
     // Attach PDF receipt if provided
@@ -146,7 +148,7 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
       emailOptions.attachments = [
         {
           filename: `MathFlowAI-Receipt-${registrationId}.pdf`,
-          content: pdfReceipt,
+          content: pdfReceipt.toString('base64'),
         },
       ]
     }
