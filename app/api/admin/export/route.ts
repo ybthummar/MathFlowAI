@@ -51,12 +51,6 @@ export async function GET(request: NextRequest) {
       'Member 3 Name',
       'Member 3 Email',
       'Member 3 Roll No',
-      'Member 4 Name',
-      'Member 4 Email',
-      'Member 4 Roll No',
-      'Member 5 Name',
-      'Member 5 Email',
-      'Member 5 Roll No',
       'Registered At',
     ]
 
@@ -67,7 +61,7 @@ export async function GET(request: NextRequest) {
       )
 
       const memberData: string[] = []
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 3; i++) {
         const member = sortedMembers[i]
         if (member) {
           memberData.push(member.name, member.email, member.rollNo)

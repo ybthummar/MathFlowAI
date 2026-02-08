@@ -157,7 +157,7 @@ export default function HomePage() {
                 iconColor: "text-green-600",
                 borderHover: "hover:border-green-300 hover-glow",
                 title: "Team Size",
-                desc: "Up to 3 Members",
+                desc: "1-3 Members",
                 detail: "At least 1 from 1st year, others from 2nd year!",
               },
             ].map((card, i) => (

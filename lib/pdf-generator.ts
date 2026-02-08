@@ -44,7 +44,7 @@ const PAGE_W = 595.28   // A4 width in points
 const PAGE_H = 841.89   // A4 height
 const M = 50            // margin
 const CW = PAGE_W - 2 * M  // content width
-const FOOTER_H = 65     // reserved for footer
+const FOOTER_H = 50     // reserved for footer
 const MAX_Y = PAGE_H - FOOTER_H - 10
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
@@ -108,9 +108,9 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
 
       // ── Section heading ──
       const heading = (title: string): number => {
-        needSpace(30)
-        doc.fontSize(14).fillColor(C.textDark).font('Helvetica-Bold').text(title, M, y)
-        return (y += 22)
+        needSpace(24)
+        doc.fontSize(12).fillColor(C.textDark).font('Helvetica-Bold').text(title, M, y)
+        return (y += 18)
       }
 
       // ═════════════════════════════════════════════════════════════════════════
@@ -171,15 +171,15 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
       }
 
       y += 72
-      divider(y); y += 14
+      divider(y); y += 10
 
       // ═════════════════════════════════════════════════════════════════════════
       //  TEAM DETAILS
       // ═════════════════════════════════════════════════════════════════════════
-      needSpace(110)
+      needSpace(80)
       y = heading('Team Details')
 
-      const boxH = 58
+      const boxH = 50
       // Team Name box
       doc.roundedRect(M, y, 240, boxH, 4).fillAndStroke(C.bgCard, C.border)
       doc.fontSize(9).fillColor(C.textMuted).font('Helvetica')
@@ -196,12 +196,12 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
       doc.fontSize(11).fillColor(C.textDark).font('Helvetica-Bold')
         .text(data.department, deptX + 10, y + 26, { width: deptW - 20, lineBreak: true })
 
-      y += boxH + 16
+      y += boxH + 10
 
       // ═════════════════════════════════════════════════════════════════════════
       //  CONTACT INFORMATION
       // ═════════════════════════════════════════════════════════════════════════
-      needSpace(70)
+      needSpace(60)
       y = heading('Contact Information')
 
       const infoRow = (label: string, value: string) => {
@@ -215,43 +215,43 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
       infoRow('Leader Email:', data.leaderEmail)
       infoRow('Leader Phone:', data.leaderPhone)
       infoRow('Team Size:', `${data.members.length} Members`)
-      y += 10
+      y += 6
 
       // ═════════════════════════════════════════════════════════════════════════
       //  TEAM MEMBERS TABLE
       // ═════════════════════════════════════════════════════════════════════════
-      needSpace(80)
+      needSpace(60)
       y = heading(`Team Members (${data.members.length})`)
 
       // Column layout
       const cols = { num: 28, name: 150, roll: 82, year: 62, email: CW - 28 - 150 - 82 - 62 }
 
       // Header row
-      const thH = 26
+      const thH = 22
       doc.roundedRect(M, y, CW, thH, 3).fill(C.primary)
-      doc.fontSize(9).fillColor(C.white).font('Helvetica-Bold')
+      doc.fontSize(8).fillColor(C.white).font('Helvetica-Bold')
       let cx = M
-      doc.text('#',       cx + 8,           y + 8, { width: cols.num })
+      doc.text('#',       cx + 8,           y + 6, { width: cols.num })
       cx += cols.num
-      doc.text('Name',    cx + 5,           y + 8, { width: cols.name })
+      doc.text('Name',    cx + 5,           y + 6, { width: cols.name })
       cx += cols.name
-      doc.text('Roll No', cx + 5,           y + 8, { width: cols.roll })
+      doc.text('Roll No', cx + 5,           y + 6, { width: cols.roll })
       cx += cols.roll
-      doc.text('Year',    cx + 5,           y + 8, { width: cols.year })
+      doc.text('Year',    cx + 5,           y + 6, { width: cols.year })
       cx += cols.year
-      doc.text('Email',   cx + 5,           y + 8, { width: cols.email })
+      doc.text('Email',   cx + 5,           y + 6, { width: cols.email })
       y += thH + 1
 
       // Data rows (with page-break awareness)
       data.members.forEach((member, i) => {
-        const rowH = 28
+        const rowH = 24
         needSpace(rowH + 2)
 
         const bg = i % 2 === 0 ? C.bgLight : C.white
         doc.roundedRect(M, y, CW, rowH, 2).fill(bg)
 
-        const ty = y + 9
-        doc.fontSize(9).fillColor(C.textDark)
+        const ty = y + 7
+        doc.fontSize(8).fillColor(C.textDark)
         cx = M
 
         doc.font('Helvetica').text(String(i + 1), cx + 10, ty, { width: cols.num })
@@ -269,18 +269,18 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
         doc.text(member.year, cx + 5, ty, { width: cols.year - 10, lineBreak: false })
         cx += cols.year
 
-        doc.fontSize(8)
+        doc.fontSize(7)
           .text(member.email, cx + 5, ty, { width: cols.email - 10, lineBreak: false })
 
         y += rowH + 1
       })
 
-      y += 14
+      y += 10
 
       // ═════════════════════════════════════════════════════════════════════════
       //  EVENT DETAILS
       // ═════════════════════════════════════════════════════════════════════════
-      needSpace(120)
+      needSpace(90)
       y = heading('Event Details')
 
       const events: [string, string][] = [
@@ -290,14 +290,14 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
         ['Rounds:', 'Round 1: Math Escape Room (60 min)  |  Round 2: AI Challenge (120 min)'],
       ]
       events.forEach(([label, value]) => {
-        needSpace(22)
-        doc.fontSize(10).fillColor(C.textMuted).font('Helvetica-Bold')
-          .text(label, M + 5, y, { width: 55 })
-        doc.fontSize(10).fillColor(C.textDark).font('Helvetica')
-          .text(value, M + 65, y, { width: CW - 70 })
-        y += 20
+        needSpace(18)
+        doc.fontSize(9).fillColor(C.textMuted).font('Helvetica-Bold')
+          .text(label, M + 5, y, { width: 50 })
+        doc.fontSize(9).fillColor(C.textDark).font('Helvetica')
+          .text(value, M + 60, y, { width: CW - 65 })
+        y += 16
       })
-      y += 8
+      y += 6
 
       // ═════════════════════════════════════════════════════════════════════════
       //  IMPORTANT REMINDERS
@@ -307,46 +307,46 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
         'Round 1: No electronic devices allowed  |  Round 2: All resources permitted.',
         'Report to the venue 30 minutes before the event starts.',
       ]
-      const remindH = 26 + reminders.length * 15
-      needSpace(remindH + 8)
+      const remindH = 22 + reminders.length * 14
+      needSpace(remindH + 6)
 
       doc.roundedRect(M, y, CW, remindH, 4).fillAndStroke(C.warnBg, C.warnBorder)
-      doc.fontSize(11).fillColor(C.warnTitle).font('Helvetica-Bold')
-        .text('Important Reminders', M + 12, y + 8)
+      doc.fontSize(10).fillColor(C.warnTitle).font('Helvetica-Bold')
+        .text('Important Reminders', M + 12, y + 6)
 
-      doc.fontSize(9).fillColor(C.warnBody).font('Helvetica')
+      doc.fontSize(8).fillColor(C.warnBody).font('Helvetica')
       reminders.forEach((r, i) => {
-        doc.text(`  •  ${r}`, M + 12, y + 26 + i * 15, { width: CW - 24 })
+        doc.text(`  •  ${r}`, M + 12, y + 22 + i * 14, { width: CW - 24 })
       })
 
       // ═════════════════════════════════════════════════════════════════════════
       //  ORGANIZER DETAILS
       // ═════════════════════════════════════════════════════════════════════════
-      y += remindH + 20
-      needSpace(110)
+      y += remindH + 14
+      needSpace(75)
       y = heading('Organizer Details')
 
       // Faculty Coordinators
-      doc.fontSize(10).fillColor(C.textMuted).font('Helvetica-Bold')
+      doc.fontSize(9).fillColor(C.textMuted).font('Helvetica-Bold')
         .text('Faculty Coordinators:', M, y)
-      y += 15
-      doc.fontSize(9).fillColor(C.textDark).font('Helvetica')
+      y += 13
+      doc.fontSize(8).fillColor(C.textDark).font('Helvetica')
         .text('Prof. Mukti Patel  |  Prof. Bhargav Shobhana', M + 10, y)
-      y += 18
+      y += 14
 
       // Core committee (compact single line)
-      doc.fontSize(10).fillColor(C.textMuted).font('Helvetica-Bold')
+      doc.fontSize(9).fillColor(C.textMuted).font('Helvetica-Bold')
         .text('Core Committee:', M, y)
-      y += 15
-      doc.fontSize(9).fillColor(C.textDark).font('Helvetica')
+      y += 13
+      doc.fontSize(8).fillColor(C.textDark).font('Helvetica')
         .text('President: Yash Davda  |  Vice President: Dhwani Navadia  |  Secretary: Krish Singh  |  Treasurer: Hasti Bhalodiya', M + 10, y, { width: CW - 20 })
-      y += 18
+      y += 14
 
       // Website
-      doc.fontSize(10).fillColor(C.textMuted).font('Helvetica-Bold')
+      doc.fontSize(9).fillColor(C.textMuted).font('Helvetica-Bold')
         .text('Website Development:', M, y)
-      y += 15
-      doc.fontSize(9).fillColor(C.textDark).font('Helvetica')
+      y += 13
+      doc.fontSize(8).fillColor(C.textDark).font('Helvetica')
         .text('Yug Thummar', M + 10, y)
 
       // ═════════════════════════════════════════════════════════════════════════
@@ -361,16 +361,16 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
         doc.strokeColor(C.border).lineWidth(0.5)
           .moveTo(M, fy).lineTo(PAGE_W - M, fy).stroke()
 
-        doc.fontSize(8).fillColor(C.textMuted).font('Helvetica')
+        doc.fontSize(7).fillColor(C.textMuted).font('Helvetica')
           .text(
-            'MATH for AI Club  |  CSPIT, CHARUSAT  |  socialmedia.cspit.aiml@charusat.ac.in',
-            0, fy + 10, { align: 'center', width: PAGE_W },
+            'MATH for AI Club  |  Dept. of AI & ML, CSPIT, CHARUSAT  |  socialmedia.cspit.aiml@charusat.ac.in',
+            0, fy + 8, { align: 'center', width: PAGE_W },
           )
 
-        doc.fontSize(7).fillColor(C.textLight)
+        doc.fontSize(6).fillColor(C.textLight)
           .text(
             `Computer-generated receipt — no signature required.  |  Page ${p - range.start + 1} of ${totalPages}`,
-            0, fy + 24, { align: 'center', width: PAGE_W },
+            0, fy + 20, { align: 'center', width: PAGE_W },
           )
       }
 
