@@ -107,7 +107,7 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
         <p style="margin: 0; color: #5b21b6; font-weight: 600; font-size: 16px;">🗓️ Event Details</p>
         <p style="margin: 10px 0 5px 0; color: #1f2937; font-size: 18px; font-weight: 700;">February 21, 2026</p>
         <p style="margin: 0; color: #4b5563;">9:00 AM - 5:00 PM IST</p>
-        <p style="margin: 10px 0 0 0; color: #4b5563;">📍 Main Auditorium, CHARUSAT Campus</p>
+        <p style="margin: 10px 0 0 0; color: #4b5563;">📍 Seminar Hall 2nd Floor, CSPIT-A6 Building, CHARUSAT</p>
       </div>
       
       <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
@@ -118,7 +118,7 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
       
       <p style="color: #6b7280; font-size: 12px; text-align: center; margin-bottom: 10px;">
         This is an automated confirmation email from MATH for AI.<br>
-        For any queries, contact us at <a href="mailto:events@mathflowai.com" style="color: #7c3aed;">events@mathflowai.com</a>
+        For any queries, contact us at <a href="mailto:socialmedia.cspit.aiml@charusat.ac.in" style="color: #7c3aed;">socialmedia.cspit.aiml@charusat.ac.in</a>
       </p>
       
       <p style="color: #9ca3af; font-size: 11px; text-align: center;">
@@ -130,13 +130,19 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
 </html>
 `
 
-  // Send email to team leader
-  const allEmails = [leaderEmail, ...members.map(m => m.email).filter(e => e !== leaderEmail)]
+  // Send email to team leader (primary recipient)
+  // Other members are CC'd so the leader always gets full details
+  const ccEmails = members
+    .map(m => m.email)
+    .filter(e => e !== leaderEmail)
   
   try {
+    const fromAddress = process.env.EMAIL_FROM || 'MATH for AI <onboarding@resend.dev>'
+    
     const emailOptions: any = {
-      from: process.env.EMAIL_FROM || 'MathFlow AI <noreply@resend.dev>',
-      to: allEmails,
+      from: fromAddress,
+      to: [leaderEmail],
+      ...(ccEmails.length > 0 && { cc: ccEmails }),
       subject: `✅ Registration Confirmed - ${teamName} | MathFlow AI`,
       html: emailHtml,
     }
@@ -153,9 +159,17 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
 
     const result = await resend.emails.send(emailOptions)
     
-    return { success: true, data: result }
-  } catch (error) {
-    console.error('Email sending failed:', error)
+    if (result.error) {
+      console.error('Resend API error:', JSON.stringify(result.error, null, 2))
+      return { success: false, error: result.error }
+    }
+    
+    console.log('Email sent successfully to', leaderEmail, 'ID:', result.data?.id)
+    return { success: true, data: result.data }
+  } catch (error: any) {
+    console.error('Email sending failed:', error?.message || error)
+    console.error('From:', process.env.EMAIL_FROM)
+    console.error('To:', leaderEmail)
     return { success: false, error }
   }
 }
@@ -209,7 +223,7 @@ export async function sendStatusUpdateEmail(
       <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
       
       <p style="color: #6b7280; font-size: 12px; text-align: center;">
-        For queries, contact us at events@mathflowai.com
+        For queries, contact us at socialmedia.cspit.aiml@charusat.ac.in
       </p>
     </div>
   </div>
@@ -219,15 +233,21 @@ export async function sendStatusUpdateEmail(
 
   try {
     const result = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'MathFlow AI <noreply@resend.dev>',
+      from: process.env.EMAIL_FROM || 'MATH for AI <onboarding@resend.dev>',
       to: email,
       subject: `${title} - ${teamName} | MathFlow AI`,
       html: emailHtml,
     })
     
-    return { success: true, data: result }
-  } catch (error) {
-    console.error('Email sending failed:', error)
+    if (result.error) {
+      console.error('Resend API error:', JSON.stringify(result.error, null, 2))
+      return { success: false, error: result.error }
+    }
+    
+    console.log('Status email sent to', email, 'ID:', result.data?.id)
+    return { success: true, data: result.data }
+  } catch (error: any) {
+    console.error('Status email sending failed:', error?.message || error)
     return { success: false, error }
   }
 }

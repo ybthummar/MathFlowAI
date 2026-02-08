@@ -105,12 +105,12 @@ ${i + 1}. ${m.name}${m.isLeader ? ' (Team Leader)' : ''}
 IMPORTANT INFORMATION
 ----------------------------------------
 • Event Date: February 21, 2026
-• Venue: Main Auditorium, Tech Campus
+• Venue: Seminar Hall 2nd Floor, CSPIT-A6 Building, CHARUSAT
 • Reporting Time: 8:30 AM
 • Bring this confirmation and valid ID
 
 ----------------------------------------
-Contact: events@mathflowai.com
+Contact: socialmedia.cspit.aiml@charusat.ac.in
 ========================================
     `
 
@@ -157,7 +157,7 @@ Contact: events@mathflowai.com
   }
 
   return (
-    <div className="container py-10 md:py-16">
+    <div className="container py-8 sm:py-10 md:py-16 px-4 sm:px-6">
       <div className="max-w-2xl mx-auto">
         {/* Success Header */}
         <AnimatedSection variant="scale-up" duration={600}>
@@ -165,7 +165,7 @@ Contact: events@mathflowai.com
           <div className="h-20 w-20 rounded-full gradient-bg flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
             <CheckCircle2 className="h-10 w-10 text-white" />
           </div>
-          <h1 className="text-3xl font-bold md:text-4xl">Registration Successful!</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold md:text-4xl">Registration Successful!</h1>
           <p className="mt-2 text-muted-foreground">
             Your team has been registered for MathFlow AI
           </p>
@@ -178,8 +178,8 @@ Contact: events@mathflowai.com
           <CardContent className="py-6">
             <div className="text-center">
               <p className="text-sm text-muted-foreground mb-2">Your Registration ID</p>
-              <div className="flex items-center justify-center gap-2">
-                <code className="text-2xl md:text-3xl font-mono font-bold text-primary">
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                <code className="text-xl sm:text-2xl md:text-3xl font-mono font-bold text-primary break-all">
                   {team.registrationId}
                 </code>
                 <Button
@@ -212,25 +212,25 @@ Contact: events@mathflowai.com
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-3 text-sm">
-              <div className="flex justify-between py-2 border-b">
+              <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b gap-1">
                 <span className="text-muted-foreground">Team Name</span>
-                <span className="font-medium">{team.teamName}</span>
+                <span className="font-medium break-all">{team.teamName}</span>
               </div>
-              <div className="flex justify-between py-2 border-b">
+              <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b gap-1">
                 <span className="text-muted-foreground">Department</span>
                 <span className="font-medium">{team.department}</span>
               </div>
-              <div className="flex justify-between py-2 border-b">
+              <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b gap-1">
                 <span className="text-muted-foreground">Contact Email</span>
-                <span className="font-medium">{team.leaderEmail}</span>
+                <span className="font-medium break-all">{team.leaderEmail}</span>
               </div>
-              <div className="flex justify-between py-2 border-b">
+              <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b gap-1">
                 <span className="text-muted-foreground">Status</span>
                 <Badge variant={team.status === "APPROVED" ? "success" : "secondary"}>
                   {team.status}
                 </Badge>
               </div>
-              <div className="flex justify-between py-2">
+              <div className="flex flex-col sm:flex-row sm:justify-between py-2 gap-1">
                 <span className="text-muted-foreground">Registered On</span>
                 <span className="font-medium">
                   {new Date(team.createdAt).toLocaleDateString()}
@@ -284,7 +284,7 @@ Contact: events@mathflowai.com
             <h4 className="font-semibold mb-2">📌 Important Information</h4>
             <ul className="text-sm text-muted-foreground space-y-1">
               <li>• Event Date: <strong>February 21, 2026</strong></li>
-              <li>• Venue: <strong>Main Auditorium, Tech Campus</strong></li>
+              <li>• Venue: <strong>Seminar Hall 2nd Floor, CSPIT-A6 Building, CHARUSAT</strong></li>
               <li>• Reporting Time: <strong>8:30 AM</strong></li>
               <li>• All team members must carry valid college ID cards</li>
               <li>• A confirmation email has been sent to all team members</li>

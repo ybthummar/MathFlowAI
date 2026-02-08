@@ -104,10 +104,10 @@ export async function POST(request: NextRequest) {
 
     const docRef = await teamsCollection.add(teamData)
 
-    // Generate PDF receipt and send confirmation email (async, don't block response)
+    // Generate PDF receipt and send confirmation email to team leader
     const leader = members.find(m => m.isLeader) || members[0]
     
-    // Generate PDF receipt
+    // Generate PDF receipt and send email (fire-and-forget, but log errors)
     generateReceiptPDF({
       registrationId,
       teamName: data.teamName,
@@ -124,7 +124,8 @@ export async function POST(request: NextRequest) {
       createdAt: now,
     })
       .then(pdfBuffer => {
-        // Send email with PDF attachment
+        console.log(`PDF receipt generated for team "${data.teamName}" (${registrationId})`)
+        // Send email with PDF attachment to team leader
         return sendConfirmationEmail({
           teamName: data.teamName,
           registrationId,
@@ -139,7 +140,16 @@ export async function POST(request: NextRequest) {
           pdfReceipt: pdfBuffer,
         })
       })
-      .catch(console.error)
+      .then(result => {
+        if (result.success) {
+          console.log(`Confirmation email sent to ${data.leaderEmail} for team "${data.teamName}"`)
+        } else {
+          console.error(`Failed to send email to ${data.leaderEmail}:`, result.error)
+        }
+      })
+      .catch(error => {
+        console.error(`Email/PDF pipeline failed for team "${data.teamName}":`, error)
+      })
 
     return NextResponse.json({
       success: true,

@@ -230,7 +230,7 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4 mb-8">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Teams</CardTitle>
@@ -281,7 +281,7 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -364,7 +364,7 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
                             <span className="font-medium text-foreground">Department:</span>{" "}
                             {team.department}
                           </p>
-                          <p>
+                          <p className="break-all">
                             <span className="font-medium text-foreground">Leader:</span>{" "}
                             {team.leaderEmail} | {team.leaderPhone}
                           </p>
@@ -403,7 +403,7 @@ export function AdminDashboard({ admin, onLogout }: AdminDashboardProps) {
 
                     {/* Members Expandable */}
                     <Separator className="my-4" />
-                    <div className="grid gap-2 md:grid-cols-3 lg:grid-cols-5">
+                    <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
                       {team.members.map((member, idx) => (
                         <div
                           key={idx}

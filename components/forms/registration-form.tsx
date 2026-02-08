@@ -417,22 +417,22 @@ export function RegistrationForm() {
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Team Info Summary */}
-              <div className="rounded-lg border p-4 space-y-3">
+              <div className="rounded-lg border p-3 sm:p-4 space-y-3">
                 <h4 className="font-semibold">Team Information</h4>
                 <div className="grid gap-2 text-sm">
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
                     <span className="text-muted-foreground">Team Name:</span>
-                    <span className="font-medium">{form.watch("teamName")}</span>
+                    <span className="font-medium break-all">{form.watch("teamName")}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
                     <span className="text-muted-foreground">Department:</span>
                     <span className="font-medium">{form.watch("department")}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
                     <span className="text-muted-foreground">Leader Email:</span>
-                    <span className="font-medium">{form.watch("leaderEmail")}</span>
+                    <span className="font-medium break-all">{form.watch("leaderEmail")}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
                     <span className="text-muted-foreground">Leader Phone:</span>
                     <span className="font-medium">{form.watch("leaderPhone")}</span>
                   </div>

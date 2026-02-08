@@ -202,7 +202,7 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
       const eventDetails = [
         { label: '📅  Date:', value: 'February 21, 2026' },
         { label: '⏰  Time:', value: '9:00 AM - 5:00 PM IST' },
-        { label: '📍  Venue:', value: 'Main Auditorium, Tech Campus' },
+        { label: '📍  Venue:', value: 'Seminar Hall 2nd Floor, CSPIT-A6 Building, CHARUSAT' },
         { label: '🎯  Rounds:', value: 'Round 1: Math Escape Room (60 min) | Round 2: AI Challenge (120 min)' },
       ]
 
@@ -250,7 +250,7 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
       doc.fontSize(9)
         .fillColor('#6B7280')
         .font('Helvetica')
-        .text('MATH for AI Club | Contact: 23aiml012@charusat.edu.in', 0, footerY + 15, { 
+        .text('MATH for AI Club | Contact: socialmedia.cspit.aiml@charusat.ac.in', 0, footerY + 15, { 
           align: 'center',
           width: doc.page.width
         })
