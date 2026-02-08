@@ -65,7 +65,6 @@ export async function GET(request: NextRequest) {
       department: team.department,
       leaderEmail: team.leaderEmail,
       leaderPhone: team.leaderPhone,
-      status: team.status,
       members: sortedMembers.map(m => ({
         name: m.name,
         email: m.email,

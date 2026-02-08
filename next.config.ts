@@ -6,8 +6,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [],
     unoptimized: false,
   },
-  // Firebase Admin needs to be external
-  serverExternalPackages: ['firebase-admin'],
+  // Native Node.js packages need to be external
+  serverExternalPackages: ['firebase-admin', 'pdfkit'],
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',

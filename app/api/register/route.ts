@@ -114,7 +114,6 @@ export async function POST(request: NextRequest) {
       department: data.department,
       leaderEmail: data.leaderEmail,
       leaderPhone: data.leaderPhone,
-      status: 'PENDING',
       members: members.map(m => ({
         name: m.name,
         email: m.email,

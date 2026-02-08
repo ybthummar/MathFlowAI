@@ -210,12 +210,6 @@ export function SuccessContent() {
                 <span className="text-muted-foreground">Contact Email</span>
                 <span className="font-medium break-all">{team.leaderEmail}</span>
               </div>
-              <div className="flex flex-col sm:flex-row sm:justify-between py-2 border-b gap-1">
-                <span className="text-muted-foreground">Status</span>
-                <Badge variant={team.status === "APPROVED" ? "success" : "secondary"}>
-                  {team.status}
-                </Badge>
-              </div>
               <div className="flex flex-col sm:flex-row sm:justify-between py-2 gap-1">
                 <span className="text-muted-foreground">Registered On</span>
                 <span className="font-medium">

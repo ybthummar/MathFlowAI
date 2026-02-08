@@ -11,7 +11,6 @@ export interface PDFReceiptData {
   department: string
   leaderEmail: string
   leaderPhone: string
-  status: string
   members: {
     name: string
     email: string
@@ -34,14 +33,11 @@ const C = {
   bgLight:        '#F9FAFB',
   bgCard:         '#F3F4F6',
   white:          '#FFFFFF',
-  headerAccent:   '#E0E7FF',
+  headerAccent:   '#6B7280',
   warnBg:         '#FEF3C7',
   warnBorder:     '#F59E0B',
   warnTitle:      '#92400E',
   warnBody:       '#78350F',
-  statusApproved: { bg: '#DCFCE7', fg: '#166534' },
-  statusPending:  { bg: '#FEF9C3', fg: '#854D0E' },
-  statusRejected: { bg: '#FEE2E2', fg: '#991B1B' },
 } as const
 
 const PAGE_W = 595.28   // A4 width in points
@@ -52,15 +48,6 @@ const FOOTER_H = 65     // reserved for footer
 const MAX_Y = PAGE_H - FOOTER_H - 10
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
-
-function statusStyle(status: string) {
-  switch (status?.toUpperCase()) {
-    case 'APPROVED':  return { ...C.statusApproved, label: 'APPROVED' }
-    case 'REJECTED':  return { ...C.statusRejected, label: 'REJECTED' }
-    case 'WAITLIST':  return { ...C.statusPending,  label: 'WAITLISTED' }
-    default:          return { ...C.statusPending,  label: 'PENDING' }
-  }
-}
 
 function safeDateStr(d: Date, opts: Intl.DateTimeFormatOptions): string {
   try { return d.toLocaleDateString('en-US', opts) } catch { return String(d) }
@@ -127,10 +114,10 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
       }
 
       // ═════════════════════════════════════════════════════════════════════════
-      //  HEADER BANNER  (with logos)
+      //  HEADER BANNER  (white with accent border)
       // ═════════════════════════════════════════════════════════════════════════
-      doc.rect(0, 0, PAGE_W, 115).fill(C.primary)
-      doc.rect(0, 100, PAGE_W, 15).fill(C.secondary)
+      doc.rect(0, 0, PAGE_W, 115).fill(C.white)
+      doc.rect(0, 110, PAGE_W, 5).fill(C.primary)
 
       // Club logo
       const logoSize = 50
@@ -142,34 +129,27 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
       const titleX = M + logoSize + 12
       const titleW = PAGE_W - titleX - M
 
-      doc.fontSize(24).fillColor(C.white).font('Helvetica-Bold')
+      doc.fontSize(24).fillColor(C.primary).font('Helvetica-Bold')
         .text('MathFlow AI', titleX, 14, { width: titleW, align: 'left' })
 
       doc.fontSize(9).fillColor(C.headerAccent).font('Helvetica')
         .text('A Flagship Event by MATH for AI Club', titleX, 42, { width: titleW, align: 'left' })
 
-      doc.fontSize(8).fillColor(C.white).font('Helvetica')
-        .text('CSPIT  |  CHARUSAT University', titleX, 54, { width: titleW, align: 'left' })
+      doc.fontSize(8).fillColor(C.textMuted).font('Helvetica')
+        .text('Department of Artificial Intelligence and Machine Learning  |  CSPIT, CHARUSAT University', titleX, 54, { width: titleW, align: 'left' })
 
-      doc.fontSize(11).fillColor(C.white).font('Helvetica-Bold')
+      doc.fontSize(11).fillColor(C.textDark).font('Helvetica-Bold')
         .text('REGISTRATION CONFIRMATION RECEIPT', 0, 82, { align: 'center' })
 
       y = 130
 
       // ═════════════════════════════════════════════════════════════════════════
-      //  REGISTRATION ID  ·  STATUS  ·  DATE  ·  QR CODE
+      //  REGISTRATION ID  ·  DATE  ·  QR CODE
       // ═════════════════════════════════════════════════════════════════════════
       doc.fontSize(9).fillColor(C.textMuted).font('Helvetica')
         .text('REGISTRATION ID', M, y)
       doc.fontSize(18).fillColor(C.textDark).font('Helvetica-Bold')
         .text(data.registrationId, M, y + 14)
-
-      // Status badge
-      const st = statusStyle(data.status)
-      const stW = doc.widthOfString(st.label) + 16
-      doc.roundedRect(M, y + 40, stW, 18, 3).fill(st.bg)
-      doc.fontSize(8).fillColor(st.fg).font('Helvetica-Bold')
-        .text(st.label, M + 8, y + 45)
 
       // Date & time (right-aligned)
       const dateStr = safeDateStr(data.createdAt, { year: 'numeric', month: 'long', day: 'numeric' })
