@@ -84,12 +84,11 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
     })
   } catch { /* non-critical */ }
 
-  // Load club logo
+  // Load logos
   let logoBuf: Buffer | null = null
   try {
-    const logoPath = path.join(process.cwd(), 'public', 'logo.png')
-    logoBuf = fs.readFileSync(logoPath)
-  } catch { /* non-critical — will skip logo */ }
+    logoBuf = fs.readFileSync(path.join(process.cwd(), 'public', 'logo.png'))
+  } catch { /* non-critical */ }
 
   return new Promise((resolve, reject) => {
     try {
@@ -128,30 +127,32 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
       }
 
       // ═════════════════════════════════════════════════════════════════════════
-      //  HEADER BANNER  (with logo)
+      //  HEADER BANNER  (with logos)
       // ═════════════════════════════════════════════════════════════════════════
       doc.rect(0, 0, PAGE_W, 115).fill(C.primary)
       doc.rect(0, 100, PAGE_W, 15).fill(C.secondary)
 
-      // Club logo (left of title)
+      // Club logo
+      const logoSize = 50
       if (logoBuf) {
-        try {
-          doc.image(logoBuf, M, 12, { width: 55, height: 55 })
-        } catch { /* skip if image format unsupported */ }
+        try { doc.image(logoBuf, M, 6, { width: logoSize, height: logoSize }) } catch {}
       }
 
-      const titleX = logoBuf ? M + 65 : 0
-      const titleW = logoBuf ? PAGE_W - M - 65 - M : PAGE_W
-      const titleAlign = logoBuf ? 'left' as const : 'center' as const
+      // Title text next to logo
+      const titleX = M + logoSize + 12
+      const titleW = PAGE_W - titleX - M
 
-      doc.fontSize(28).fillColor(C.white).font('Helvetica-Bold')
-        .text('MathFlow AI', titleX, 16, { width: titleW, align: titleAlign })
+      doc.fontSize(24).fillColor(C.white).font('Helvetica-Bold')
+        .text('MathFlow AI', titleX, 14, { width: titleW, align: 'left' })
 
-      doc.fontSize(10).fillColor(C.headerAccent).font('Helvetica')
-        .text('A Flagship Event by MATH for AI Club', titleX, 48, { width: titleW, align: titleAlign })
+      doc.fontSize(9).fillColor(C.headerAccent).font('Helvetica')
+        .text('A Flagship Event by MATH for AI Club', titleX, 42, { width: titleW, align: 'left' })
+
+      doc.fontSize(8).fillColor(C.white).font('Helvetica')
+        .text('CSPIT  |  CHARUSAT University', titleX, 54, { width: titleW, align: 'left' })
 
       doc.fontSize(11).fillColor(C.white).font('Helvetica-Bold')
-        .text('REGISTRATION CONFIRMATION RECEIPT', 0, 80, { align: 'center' })
+        .text('REGISTRATION CONFIRMATION RECEIPT', 0, 82, { align: 'center' })
 
       y = 130
 

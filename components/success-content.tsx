@@ -145,7 +145,7 @@ export function SuccessContent() {
         {/* Success Header */}
         <AnimatedSection variant="scale-up" duration={600}>
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
+          <div className="flex items-center justify-center mb-4">
             <Image src="/logo.png" alt="MATH for AI Club" width={64} height={64} className="rounded-xl" />
           </div>
           <div className="h-20 w-20 rounded-full gradient-bg flex items-center justify-center mx-auto mb-4 animate-pulse-glow">

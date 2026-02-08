@@ -82,7 +82,7 @@ export function TeamPage() {
 
         <div className="container relative">
           <AnimatedSection variant="fade-up" className="mx-auto max-w-3xl text-center">
-            <div className="flex justify-center mb-4">
+            <div className="flex items-center justify-center mb-4">
               <Image src="/logo.png" alt="MATH for AI Club" width={80} height={80} className="rounded-xl" />
             </div>
             <Badge variant="secondary" className="mb-4 animate-bounce-subtle">
@@ -99,7 +99,7 @@ export function TeamPage() {
             <div className="mt-8 flex items-center justify-center gap-3 text-sm text-muted-foreground">
               <Users className="h-5 w-5 text-primary" />
               <span>
-                {totalMembers} team members across {TEAM_CATEGORIES.length} divisions
+                {totalMembers} team members of  AI & ML Department.
               </span>
             </div>
           </AnimatedSection>

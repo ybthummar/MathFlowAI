@@ -57,7 +57,7 @@ export default function HomePage() {
         <div className="container relative">
           <div className="mx-auto max-w-3xl text-center">
             <AnimatedSection variant="fade-down" duration={600}>
-              <div className="flex justify-center mb-4">
+              <div className="flex items-center justify-center mb-4">
                 <Image
                   src="/logo.png"
                   alt="MATH for AI Club"
