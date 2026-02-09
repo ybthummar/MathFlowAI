@@ -16,11 +16,11 @@ import {
   Sparkles,
   ChevronDown,
 } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CountdownTimer } from "@/components/countdown-timer"
-import { AnimatedSection } from "@/components/ui/animated-section"
 import VaporizeTextCycle, { Tag } from "@/components/ui/vapour-text-effect"
 import dynamic from "next/dynamic"
 
@@ -28,6 +28,51 @@ const AnimatedShaderBackground = dynamic(
   () => import("@/components/ui/animated-shader-background"),
   { ssr: false }
 )
+
+/* ---------- Animation helpers ---------- */
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0 },
+}
+
+const fadeDown = {
+  hidden: { opacity: 0, y: -40 },
+  visible: { opacity: 1, y: 0 },
+}
+
+const fadeLeft = {
+  hidden: { opacity: 0, x: 60 },
+  visible: { opacity: 1, x: 0 },
+}
+
+const fadeRight = {
+  hidden: { opacity: 0, x: -60 },
+  visible: { opacity: 1, x: 0 },
+}
+
+const scaleUp = {
+  hidden: { opacity: 0, scale: 0.85 },
+  visible: { opacity: 1, scale: 1 },
+}
+
+const blurIn = {
+  hidden: { opacity: 0, filter: "blur(12px)" },
+  visible: { opacity: 1, filter: "blur(0px)" },
+}
+
+const spring = { type: "spring" as const, stiffness: 100, damping: 20 }
+const smooth = { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.12 } },
+}
+
+const staggerContainerFast = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+}
 
 export default function HomePage() {
   const [fontSize, setFontSize] = useState("60px")
@@ -49,14 +94,17 @@ export default function HomePage() {
     <div className="flex flex-col">
       {/* ──────── HERO SECTION ──────── */}
       <section className="relative overflow-hidden py-12 sm:py-20 md:py-32">
-        {/* WebGL aurora shader background */}
         <AnimatedShaderBackground />
-        {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black/30" />
 
         <div className="container relative">
           <div className="mx-auto max-w-3xl text-center">
-            <AnimatedSection variant="fade-down" duration={600}>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={fadeDown}
+              transition={{ ...spring, delay: 0.1 }}
+            >
               <div className="flex items-center justify-center mb-4">
                 <Image
                   src="/logo.png"
@@ -70,9 +118,14 @@ export default function HomePage() {
               <Badge variant="secondary" className="mb-4 animate-bounce-subtle">
                 <Sparkles className="mr-1 h-3 w-3" /> Upcoming Events
               </Badge>
-            </AnimatedSection>
+            </motion.div>
 
-            <AnimatedSection variant="blur-in" delay={200} duration={800}>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={blurIn}
+              transition={{ duration: 0.9, delay: 0.3, ease: "easeOut" }}
+            >
               <div className="h-16 sm:h-24 md:h-32 flex items-center justify-center">
                 <VaporizeTextCycle
                   texts={["MathFlow AI", "Have you registered?"]}
@@ -94,39 +147,51 @@ export default function HomePage() {
                   tag={Tag.H1}
                 />
               </div>
-            </AnimatedSection>
+            </motion.div>
 
-            <AnimatedSection variant="fade-up" delay={400}>
-              <p className="mt-4 sm:mt-6 text-base sm:text-lg text-white/80 md:text-xl px-2">
-                A flagship event by <strong className="text-white">MATH for AI Club</strong> - Unlock the power of
-                mathematics and artificial intelligence in this thrilling escape room
-                competition. Form your team, solve puzzles, and conquer the challenge!
-              </p>
-            </AnimatedSection>
+            <motion.p
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              transition={{ ...smooth, delay: 0.5 }}
+              className="mt-4 sm:mt-6 text-base sm:text-lg text-white/80 md:text-xl px-2"
+            >
+              A flagship event by <strong className="text-white">MATH for AI Club</strong> - Unlock the power of
+              mathematics and artificial intelligence in this thrilling escape room
+              competition. Form your team, solve puzzles, and conquer the challenge!
+            </motion.p>
 
-            <AnimatedSection variant="fade-up" delay={600}>
-              <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-                <Button asChild size="lg" className="gradient-bg text-white hover:opacity-90 hover-lift group">
-                  <Link href="/register">
-                    Register Now
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="hover-lift">
-                  <a href="#event-flow">
-                    Learn More
-                    <ChevronDown className="ml-2 h-4 w-4 animate-bounce" />
-                  </a>
-                </Button>
-              </div>
-            </AnimatedSection>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              transition={{ ...spring, delay: 0.7 }}
+              className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
+            >
+              <Button asChild size="lg" className="gradient-bg text-white hover:opacity-90 hover-lift group">
+                <Link href="/register">
+                  Register Now
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="hover-lift">
+                <a href="#event-flow">
+                  Learn More
+                  <ChevronDown className="ml-2 h-4 w-4 animate-bounce" />
+                </a>
+              </Button>
+            </motion.div>
 
             {/* Countdown Timer */}
-            <AnimatedSection variant="scale-up" delay={800}>
-              <div className="mt-12">
-                <CountdownTimer />
-              </div>
-            </AnimatedSection>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={scaleUp}
+              transition={{ ...spring, delay: 0.9 }}
+              className="mt-12"
+            >
+              <CountdownTimer />
+            </motion.div>
           </div>
         </div>
       </section>
@@ -134,7 +199,13 @@ export default function HomePage() {
       {/* ──────── EVENT INFO CARDS ──────── */}
       <section className="py-10 sm:py-16 md:py-24">
         <div className="container">
-          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={staggerContainer}
+            className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
+          >
             {[
               {
                 icon: Clock,
@@ -160,8 +231,8 @@ export default function HomePage() {
                 desc: "1-3 Members",
                 detail: "At least 1 from 1st year, others from 2nd year!",
               },
-            ].map((card, i) => (
-              <AnimatedSection key={card.title} variant="fade-up" delay={i * 150}>
+            ].map((card) => (
+              <motion.div key={card.title} variants={fadeUp} transition={spring}>
                 <Card className={`border-2 transition-all duration-300 hover-lift ${card.borderHover}`}>
                   <CardHeader>
                     <card.icon className={`h-10 w-10 ${card.iconColor} transition-transform duration-300 group-hover:scale-110`} />
@@ -172,32 +243,49 @@ export default function HomePage() {
                     <p className="text-sm text-muted-foreground">{card.detail}</p>
                   </CardContent>
                 </Card>
-              </AnimatedSection>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ──────── EVENT FLOW ──────── */}
       <section id="event-flow" className="py-10 sm:py-16 md:py-24 bg-muted/50">
         <div className="container">
-          <AnimatedSection variant="fade-up" className="text-center mb-8 sm:mb-12">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeUp}
+            transition={smooth}
+            className="text-center mb-8 sm:mb-12"
+          >
             <h2 className="text-2xl sm:text-3xl font-bold md:text-4xl">Event Flow</h2>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
               Two exciting rounds await you. Show your problem-solving skills and AI knowledge!
             </p>
-          </AnimatedSection>
+          </motion.div>
 
           <div className="grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto">
             {/* Round 1 */}
-            <AnimatedSection variant="fade-right" delay={100}>
-              <Card className="relative overflow-hidden group hover-lift hover-glow">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={fadeRight}
+              transition={{ ...spring, delay: 0.1 }}
+            >
+              <Card className="relative overflow-hidden group hover-lift hover-glow h-full">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-violet-500/20 to-transparent rounded-bl-full transition-all duration-500 group-hover:w-40 group-hover:h-40" />
                 <CardHeader>
                   <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full gradient-bg text-white shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                    <motion.div
+                      whileHover={{ scale: 1.15, rotate: 8 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                      className="flex h-12 w-12 items-center justify-center rounded-full gradient-bg text-white shadow-lg"
+                    >
                       <Puzzle className="h-6 w-6" />
-                    </div>
+                    </motion.div>
                     <div>
                       <Badge variant="secondary">Round 1</Badge>
                       <CardTitle className="mt-1">Escape Room</CardTitle>
@@ -226,17 +314,27 @@ export default function HomePage() {
                   </div>
                 </CardContent>
               </Card>
-            </AnimatedSection>
+            </motion.div>
 
             {/* Round 2 */}
-            <AnimatedSection variant="fade-left" delay={250}>
-              <Card className="relative overflow-hidden group hover-lift hover-glow">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              variants={fadeLeft}
+              transition={{ ...spring, delay: 0.25 }}
+            >
+              <Card className="relative overflow-hidden group hover-lift hover-glow h-full">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/20 to-transparent rounded-bl-full transition-all duration-500 group-hover:w-40 group-hover:h-40" />
                 <CardHeader>
                   <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-cyan-600 text-white shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
+                    <motion.div
+                      whileHover={{ scale: 1.15, rotate: -8 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                      className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-cyan-600 text-white shadow-lg"
+                    >
                       <Brain className="h-6 w-6" />
-                    </div>
+                    </motion.div>
                     <div>
                       <Badge variant="secondary">Round 2</Badge>
                       <CardTitle className="mt-1">AI Challenge</CardTitle>
@@ -265,7 +363,7 @@ export default function HomePage() {
                   </div>
                 </CardContent>
               </Card>
-            </AnimatedSection>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -273,14 +371,27 @@ export default function HomePage() {
       {/* ──────── PRIZES ──────── */}
       <section className="py-10 sm:py-16 md:py-24">
         <div className="container">
-          <AnimatedSection variant="fade-up" className="text-center mb-8 sm:mb-12">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={fadeUp}
+            transition={smooth}
+            className="text-center mb-8 sm:mb-12"
+          >
             <h2 className="text-2xl sm:text-3xl font-bold md:text-4xl">Prizes & Rewards</h2>
             <p className="mt-4 text-muted-foreground">
               Total Prize Pool: <strong className="text-primary">₹10,000</strong>
             </p>
-          </AnimatedSection>
+          </motion.div>
 
-          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-3 max-w-4xl mx-auto">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={staggerContainer}
+            className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-3 max-w-4xl mx-auto"
+          >
             {[
               {
                 place: "1st Place",
@@ -318,13 +429,18 @@ export default function HomePage() {
                 titleSize: "text-xl",
                 isGradient: false,
               },
-            ].map((item, i) => (
-              <AnimatedSection key={item.place} variant="scale-up" delay={i * 200}>
-                <Card className={`text-center border-2 ${item.border} ${item.bg} hover-lift hover-glow group`}>
+            ].map((item) => (
+              <motion.div key={item.place} variants={scaleUp} transition={spring}>
+                <Card className={`text-center border-2 ${item.border} ${item.bg} hover-lift hover-glow group h-full`}>
                   <CardHeader>
-                    <Trophy
-                      className={`${item.trophySize} ${item.trophyColor} mx-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12`}
-                    />
+                    <motion.div
+                      whileHover={{ scale: 1.2, rotate: 15 }}
+                      transition={{ type: "spring", stiffness: 250, damping: 12 }}
+                    >
+                      <Trophy
+                        className={`${item.trophySize} ${item.trophyColor} mx-auto`}
+                      />
+                    </motion.div>
                     <CardTitle className={item.titleSize}>{item.place}</CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -334,9 +450,9 @@ export default function HomePage() {
                     <p className="text-sm text-muted-foreground mt-2">{item.extra}</p>
                   </CardContent>
                 </Card>
-              </AnimatedSection>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -344,14 +460,33 @@ export default function HomePage() {
       <section className="py-10 sm:py-16 md:py-24 bg-muted/50">
         <div className="container">
           <div className="max-w-3xl mx-auto">
-            <AnimatedSection variant="fade-up" className="text-center mb-8 sm:mb-12">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={fadeUp}
+              transition={smooth}
+              className="text-center mb-8 sm:mb-12"
+            >
               <h2 className="text-2xl sm:text-3xl font-bold md:text-4xl">Rules & Guidelines</h2>
-            </AnimatedSection>
+            </motion.div>
 
-            <AnimatedSection variant="scale-up" delay={200}>
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              variants={scaleUp}
+              transition={{ ...spring, delay: 0.15 }}
+            >
               <Card className="hover-glow">
                 <CardContent className="pt-6">
-                  <ul className="space-y-4">
+                  <motion.ul
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                    variants={staggerContainerFast}
+                    className="space-y-4"
+                  >
                     {[
                       "Each team can have up to 3 members",
                       "At least 1 member must be from 1st year, others can be from 2nd year only",
@@ -365,19 +500,22 @@ export default function HomePage() {
                       "Maintain discipline and respect towards coordinators and fellow participants",
                       "Electronic devices must be submitted before Round 1 begins",
                     ].map((rule, i) => (
-                      <AnimatedSection key={i} variant="fade-right" delay={i * 80}>
-                        <li className="flex items-start gap-3 group">
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full gradient-bg text-white text-xs transition-transform duration-300 group-hover:scale-110">
-                            {i + 1}
-                          </span>
-                          <span className="text-sm">{rule}</span>
-                        </li>
-                      </AnimatedSection>
+                      <motion.li
+                        key={i}
+                        variants={fadeRight}
+                        transition={spring}
+                        className="flex items-start gap-3 group"
+                      >
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full gradient-bg text-white text-xs transition-transform duration-300 group-hover:scale-110">
+                          {i + 1}
+                        </span>
+                        <span className="text-sm">{rule}</span>
+                      </motion.li>
                     ))}
-                  </ul>
+                  </motion.ul>
                 </CardContent>
               </Card>
-            </AnimatedSection>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -385,30 +523,57 @@ export default function HomePage() {
       {/* ──────── CTA ──────── */}
       <section className="py-10 sm:py-16 md:py-24">
         <div className="container">
-          <AnimatedSection variant="scale-up">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={scaleUp}
+            transition={spring}
+          >
             <Card className="gradient-bg text-white overflow-hidden relative group">
               <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
               <div className="absolute -top-20 -right-20 h-40 w-40 sm:h-60 sm:w-60 rounded-full bg-white/10 blur-3xl transition-all duration-700 group-hover:h-80 group-hover:w-80" />
               <div className="absolute -bottom-20 -left-20 h-40 w-40 sm:h-60 sm:w-60 rounded-full bg-white/10 blur-3xl transition-all duration-700 group-hover:h-80 group-hover:w-80" />
               <CardContent className="relative py-8 sm:py-12 text-center px-4 sm:px-6">
-                <h2 className="text-2xl sm:text-3xl font-bold md:text-4xl">Ready to Take the Challenge?</h2>
-                <p className="mt-3 sm:mt-4 text-white/80 max-w-xl mx-auto text-sm sm:text-base">
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ ...spring, delay: 0.1 }}
+                  className="text-2xl sm:text-3xl font-bold md:text-4xl"
+                >
+                  Ready to Take the Challenge?
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ ...spring, delay: 0.25 }}
+                  className="mt-3 sm:mt-4 text-white/80 max-w-xl mx-auto text-sm sm:text-base"
+                >
                   Join MATH for AI Club&apos;s flagship event! Form your team, register now,
                   and embark on an exciting journey of mathematics and artificial intelligence!
-                </p>
-                <Button
-                  asChild
-                  size="lg"
-                  className="mt-8 bg-white text-violet-700 hover:bg-white/90 hover-lift group/btn"
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ ...spring, delay: 0.4 }}
                 >
-                  <Link href="/register">
-                    Register Your Team
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                  </Link>
-                </Button>
+                  <Button
+                    asChild
+                    size="lg"
+                    className="mt-8 bg-white text-violet-700 hover:bg-white/90 hover-lift group/btn"
+                  >
+                    <Link href="/register">
+                      Register Your Team
+                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                    </Link>
+                  </Button>
+                </motion.div>
               </CardContent>
             </Card>
-          </AnimatedSection>
+          </motion.div>
         </div>
       </section>
     </div>
