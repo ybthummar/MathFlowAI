@@ -132,7 +132,7 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
 
   // Send email to team leader only
   try {
-    const fromAddress = process.env.EMAIL_FROM || 'MATH for AI <onboarding@resend.dev>'
+    const fromAddress = 'MATH for AI <onboarding@resend.dev>'
     
     const emailOptions: any = {
       from: fromAddress,
@@ -164,7 +164,7 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
     return { success: true, data: result.data }
   } catch (error: any) {
     console.error('Email sending failed:', error?.message || error)
-    console.error('From:', process.env.EMAIL_FROM)
+    console.error('From: MATH for AI <onboarding@resend.dev>')
     console.error('To:', leaderEmail)
     return { success: false, error }
   }
@@ -229,7 +229,7 @@ export async function sendStatusUpdateEmail(
 
   try {
     const result = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'MATH for AI <onboarding@resend.dev>',
+      from: 'MATH for AI <onboarding@resend.dev>',
       to: email,
       subject: `${title} - ${teamName} | MathFlow AI`,
       html: emailHtml,

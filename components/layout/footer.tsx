@@ -88,7 +88,6 @@ export function Footer() {
 
         <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
           <p>&copy; 2026 MATH for AI Club - MathFlow AI Event. All rights reserved.</p>
-          <p className="mt-1 text-xs">Website by Yug Thummar</p>
         </div>
       </div>
     </footer>

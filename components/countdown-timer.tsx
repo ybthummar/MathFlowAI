@@ -14,7 +14,7 @@ export function CountdownTimer() {
   })
 
   useEffect(() => {
-    const deadline = process.env.NEXT_PUBLIC_REGISTRATION_DEADLINE || "2026-02-19T23:00:00"
+    const deadline = process.env.NEXT_PUBLIC_REGISTRATION_DEADLINE || "2026-02-20T23:00:00"
     
     const timer = setInterval(() => {
       const remaining = getTimeRemaining(deadline)
