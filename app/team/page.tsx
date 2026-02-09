@@ -1,4 +1,4 @@
-import { TeamPage } from "@/components/team/team-page"
+import KineticTeamHybrid from "@/components/ui/kinetic-team-hybrid"
 
 export const metadata = {
   title: "Our Team | MathFlow AI",
@@ -6,5 +6,5 @@ export const metadata = {
 }
 
 export default function Team() {
-  return <TeamPage />
+  return <KineticTeamHybrid />
 }
