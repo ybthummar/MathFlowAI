@@ -106,8 +106,8 @@ export async function sendConfirmationEmail(data: RegistrationEmailData) {
       <div style="background: linear-gradient(135deg, #ede9fe 0%, #dbeafe 100%); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px;">
         <p style="margin: 0; color: #5b21b6; font-weight: 600; font-size: 16px;">🗓️ Event Details</p>
         <p style="margin: 10px 0 5px 0; color: #1f2937; font-size: 18px; font-weight: 700;">February 21, 2026</p>
-        <p style="margin: 0; color: #4b5563;">9:00 AM - 5:00 PM IST</p>
-        <p style="margin: 10px 0 0 0; color: #4b5563;">📍 Seminar Hall 2nd Floor, CSPIT-A6 Building, CHARUSAT</p>
+        <p style="margin: 0; color: #4b5563;">9:00 AM - 4:00 PM IST</p>
+        <p style="margin: 10px 0 0 0; color: #4b5563;">📍 2nd Floor, Department of AI & ML, CSPIT Building, CHARUSAT</p>
       </div>
       
       <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 15px; margin-bottom: 20px;">

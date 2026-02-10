@@ -271,7 +271,7 @@ export function SuccessContent() {
             <h4 className="font-semibold mb-2">📌 Important Information</h4>
             <ul className="text-sm text-muted-foreground space-y-1">
               <li>• Event Date: <strong>February 21, 2026</strong></li>
-              <li>• Venue: <strong>Seminar Hall 2nd Floor, CSPIT-A6 Building, CHARUSAT</strong></li>
+              <li>• Venue: <strong>2nd Floor, Department of AI & ML, CSPIT Building, CHARUSAT</strong></li>
               <li>• Reporting Time: <strong>8:30 AM</strong></li>
               <li>• All team members must carry valid college ID cards</li>
               <li>• A confirmation email has been sent to the team leader</li>

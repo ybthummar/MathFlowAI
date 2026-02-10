@@ -213,15 +213,15 @@ export default function HomePage() {
                 borderHover: "hover:border-violet-300 hover-glow",
                 title: "Event Date",
                 desc: "February 21, 2026",
-                detail: "9:00 AM - 5:00 PM IST",
+                detail: "9:00 AM - 4:00 PM IST",
               },
               {
                 icon: MapPin,
                 iconColor: "text-blue-600",
                 borderHover: "hover:border-blue-300 hover-glow",
                 title: "Venue",
-                desc: "Seminar Hall, 2nd Floor",
-                detail: "CSPIT-A6 Building, CHARUSAT",
+                desc: "2nd Floor, Dept. of AI & ML",
+                detail: "CSPIT Building, CHARUSAT",
               },
               {
                 icon: Users,

@@ -285,8 +285,8 @@ export async function generateReceiptPDF(data: PDFReceiptData): Promise<Buffer> 
 
       const events: [string, string][] = [
         ['Date:',   'February 21, 2026'],
-        ['Time:',   '9:00 AM - 5:00 PM IST'],
-        ['Venue:',  'Seminar Hall 2nd Floor, CSPIT-A6 Building, CHARUSAT'],
+        ['Time:',   '9:00 AM - 4:00 PM IST'],
+        ['Venue:',  '2nd Floor, Department of AI & ML, CSPIT Building, CHARUSAT'],
         ['Rounds:', 'Round 1: Math Escape Room (60 min)  |  Round 2: AI Challenge (120 min)'],
       ]
       events.forEach(([label, value]) => {

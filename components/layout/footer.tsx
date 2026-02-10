@@ -55,7 +55,7 @@ export function Footer() {
               </div>
               <div className="flex items-start space-x-2">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                <span className="text-xs sm:text-sm">Seminar Hall 2nd Floor, CSPIT-A6 Building, CHARUSAT</span>
+                <span className="text-xs sm:text-sm">2nd Floor, Department of AI & ML, CSPIT Building, CHARUSAT</span>
               </div>
             </div>
           </div>
